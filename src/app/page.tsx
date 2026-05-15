@@ -34,23 +34,23 @@ interface TargetLocation {
 // 🎯 TARGET LOCATIONS: 5 POIs per cluster
 const TARGET_LOCATIONS: TargetLocation[] = [
   // Cluster 1
-  { id: 1, cluster: 1, name: "Alpha Checkpoint", lat: 3.116576, lng: 101.657091 },
-  { id: 2, cluster: 1, name: "Beta Beacon", lat: 3.117301, lng: 101.656851 },
-  { id: 3, cluster: 1, name: "Charlie Comms", lat: 3.117500, lng: 101.656500 },
-  { id: 4, cluster: 1, name: "Delta Drop", lat: 3.116800, lng: 101.657500 },
-  { id: 5, cluster: 1, name: "Echo Extract", lat: 3.116200, lng: 101.656200 },
+  { id: 1, cluster: 1, name: "Checkpoint A", lat: 3.116576, lng: 101.657091 },
+  { id: 2, cluster: 1, name: "Checkpoint B", lat: 3.117301, lng: 101.656851 },
+  { id: 3, cluster: 1, name: "Checkpoint C", lat: 3.117500, lng: 101.656500 },
+  { id: 4, cluster: 1, name: "Checkpoint D", lat: 3.116800, lng: 101.657500 },
+  { id: 5, cluster: 1, name: "Checkpoint E", lat: 3.116200, lng: 101.656200 },
   // Cluster 2
-  { id: 6, cluster: 2, name: "Foxtrot Base", lat: 3.118000, lng: 101.657500 },
-  { id: 7, cluster: 2, name: "Golf Gateway", lat: 3.118500, lng: 101.657800 },
-  { id: 8, cluster: 2, name: "Hotel Hub", lat: 3.118200, lng: 101.658200 },
-  { id: 9, cluster: 2, name: "India Intel", lat: 3.118800, lng: 101.657200 },
-  { id: 10, cluster: 2, name: "Juliet Junction", lat: 3.119200, lng: 101.658500 },
+  { id: 6, cluster: 2, name: "Checkpoint A", lat: 3.118000, lng: 101.657500 },
+  { id: 7, cluster: 2, name: "Checkpoint B", lat: 3.118500, lng: 101.657800 },
+  { id: 8, cluster: 2, name: "Checkpoint C", lat: 3.118200, lng: 101.658200 },
+  { id: 9, cluster: 2, name: "Checkpoint D", lat: 3.118800, lng: 101.657200 },
+  { id: 10, cluster: 2, name: "Checkpoint E", lat: 3.119200, lng: 101.658500 },
   // Cluster 3
-  { id: 11, cluster: 3, name: "Kilo Kinetic", lat: 3.119000, lng: 101.658000 },
-  { id: 12, cluster: 3, name: "Lima Landing", lat: 3.119500, lng: 101.658800 },
-  { id: 13, cluster: 3, name: "Mike Matrix", lat: 3.119800, lng: 101.657800 },
-  { id: 14, cluster: 3, name: "November Node", lat: 3.120200, lng: 101.658200 },
-  { id: 15, cluster: 3, name: "Oscar Orbit", lat: 3.120500, lng: 101.659000 },
+  { id: 11, cluster: 3, name: "Checkpoint A", lat: 3.119000, lng: 101.658000 },
+  { id: 12, cluster: 3, name: "Checkpoint B", lat: 3.119500, lng: 101.658800 },
+  { id: 13, cluster: 3, name: "Checkpoint C", lat: 3.119800, lng: 101.657800 },
+  { id: 14, cluster: 3, name: "Checkpoint D", lat: 3.120200, lng: 101.658200 },
+  { id: 15, cluster: 3, name: "Checkpoint E", lat: 3.120500, lng: 101.659000 },
 ];
 
 const WIN_RADIUS = 10; // Success within 10 meters

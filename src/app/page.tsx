@@ -572,7 +572,7 @@ export default function Home() {
                           : "bg-slate-800/50 text-slate-400 border border-slate-700 cursor-not-allowed opacity-50 active:scale-100"
                       }`}
                     >
-                      {minDistance <= WIN_RADIUS ? "Submit Mission to HQ" : `Get closer to interact (${minDistance}m)`}
+                      {minDistance <= WIN_RADIUS ? "Submit Mission to Boss" : `Get closer to interact (${minDistance}m)`}
                     </button>
                   )}
                 </>

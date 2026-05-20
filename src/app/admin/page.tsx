@@ -220,7 +220,7 @@ export default function AdminDashboard() {
       <div className="relative z-10 max-w-4xl mx-auto space-y-12">
         <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/10 pb-6">
           <div>
-            <h1 className="text-3xl font-extrabold tracking-tight">HQ Command</h1>
+            <h1 className="text-3xl font-extrabold tracking-tight">Jiong Xi and Ryan is GOAT</h1>
             <p className="text-slate-400 font-medium mt-1">Live Game State Management</p>
           </div>
           <button

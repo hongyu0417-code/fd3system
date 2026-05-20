@@ -27,21 +27,21 @@ export const CLUSTER_NAMES: Record<number, string> = {
 // --- Target Locations (GPS coordinates unchanged) ---
 
 export const TARGET_LOCATIONS: TargetLocation[] = [
-  // Cluster 1 — Pasar Seni (8 checkpoints)
-  { id: 1,  cluster: 1, name: "Checkpoint A", lat: 3.144353, lng: 101.695690 },
-  { id: 2,  cluster: 1, name: "Checkpoint B", lat: 3.146150, lng: 101.695775 },
-  { id: 3,  cluster: 1, name: "Checkpoint C", lat: 3.147089, lng: 101.695909 },
-  { id: 4,  cluster: 1, name: "Checkpoint D", lat: 3.145767, lng: 101.696159 },
-  { id: 5,  cluster: 1, name: "Checkpoint E", lat: 3.143695, lng: 101.697860 },
-  { id: 6,  cluster: 1, name: "Checkpoint F", lat: 3.142462, lng: 101.697955 },
-  { id: 7,  cluster: 1, name: "Checkpoint G", lat: 3.142612, lng: 101.696539 },
-  { id: 8,  cluster: 1, name: "Checkpoint H", lat: 3.144143, lng: 101.696682 },
-  // Cluster 2 — KLCC (5 checkpoints)
-  { id: 9,  cluster: 2, name: "Checkpoint A", lat: 3.160750, lng: 101.708306 },
-  { id: 10, cluster: 2, name: "Checkpoint B", lat: 3.158797, lng: 101.710608 },
-  { id: 11, cluster: 2, name: "Checkpoint C", lat: 3.156263, lng: 101.713009 },
-  { id: 12, cluster: 2, name: "Checkpoint D", lat: 3.156206, lng: 101.713772 },
-  { id: 13, cluster: 2, name: "Checkpoint E", lat: 3.156767, lng: 101.716090 },
+  // Cluster 1 — Pasar Seni (8 POIs)
+  { id: 1,  cluster: 1, name: "POI A", lat: 3.118444, lng: 101.656472 },
+  { id: 2,  cluster: 1, name: "POI B", lat: 3.146150, lng: 101.695775 },
+  { id: 3,  cluster: 1, name: "POI C", lat: 3.147089, lng: 101.695909 },
+  { id: 4,  cluster: 1, name: "POI D", lat: 3.145767, lng: 101.696159 },
+  { id: 5,  cluster: 1, name: "POI E", lat: 3.143695, lng: 101.697860 },
+  { id: 6,  cluster: 1, name: "POI F", lat: 3.142462, lng: 101.697955 },
+  { id: 7,  cluster: 1, name: "POI G", lat: 3.142612, lng: 101.696539 },
+  { id: 8,  cluster: 1, name: "POI H", lat: 3.144143, lng: 101.696682 },
+  // Cluster 2 — KLCC (5 POIs)
+  { id: 9,  cluster: 2, name: "POI A", lat: 3.160750, lng: 101.708306 },
+  { id: 10, cluster: 2, name: "POI B", lat: 3.158797, lng: 101.710608 },
+  { id: 11, cluster: 2, name: "POI C", lat: 3.156263, lng: 101.713009 },
+  { id: 12, cluster: 2, name: "POI D", lat: 3.156206, lng: 101.713772 },
+  { id: 13, cluster: 2, name: "POI E", lat: 3.156767, lng: 101.716090 },
 ];
 
 // --- Clue Definitions ---

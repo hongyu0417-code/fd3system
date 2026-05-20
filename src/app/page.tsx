@@ -458,7 +458,7 @@ export default function Home() {
           {/* FLOATING CHECKLIST UI (Mobile: Top, Desktop: Side) */}
           <div className="relative z-40 mt-36 md:fixed md:top-32 md:right-8 w-full max-w-sm md:w-80 bg-white/5 backdrop-blur-2xl border border-white/20 rounded-[2rem] p-5 shadow-2xl flex-shrink-0">
             <h3 className="text-white font-bold text-xs uppercase tracking-widest mb-4 opacity-80">
-              {CLUSTER_NAMES[globalActiveCluster]} Objectives
+              {CLUSTER_NAMES[globalActiveCluster]} POI
             </h3>
             <div className="space-y-3">
               {clusterTargets.map(poi => {

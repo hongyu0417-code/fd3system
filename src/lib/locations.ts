@@ -49,21 +49,21 @@ export const TARGET_LOCATIONS: TargetLocation[] = [
 export const CLUSTER_CLUES: Record<number, ClueItem[]> = {
   // Pasar Seni — 8 clues
   1: [
-    { id: "ps-1", text: "Pasar Seni Clue 1: Look near the old fountain at the entrance plaza." },
-    { id: "ps-2", text: "Pasar Seni Clue 2: The mural on the east wall hides a secret symbol." },
-    { id: "ps-3", text: "Pasar Seni Clue 3: Count the archways along the heritage corridor." },
-    { id: "ps-4", text: "Pasar Seni Clue 4: The craft vendor nearest the river knows a tale." },
-    { id: "ps-5", text: "Pasar Seni Clue 5: Seek the mosaic tile that faces north." },
-    { id: "ps-6", text: "Pasar Seni Clue 6: A lantern above the tea stall marks the spot." },
-    { id: "ps-7", text: "Pasar Seni Clue 7: Follow the painted footsteps on the walkway." },
-    { id: "ps-8", text: "Pasar Seni Clue 8: The old clock tower chimes at the final mark." },
+    { id: "ps-1", text: "A lost person will probably find this" },
+    { id: "ps-2", text: "northeast central market, might wanna take a step back" },
+    { id: "ps-3", text: "what do you get when you throw butter out of a window?" },
+    { id: "ps-4", text: "transformers: dark of the moon" },
+    { id: "ps-5", text: "hokkien mee is red, no such thing as PRAWN NOODLE" },
+    { id: "ps-6", text: "Why did the chicken cross the road?" },
+    { id: "ps-7", text: "AIESEC logo" },
+    { id: "ps-8", text: "When was this tokong built?" },
   ],
   // KLCC — 5 clues
   2: [
-    { id: "klcc-1", text: "KLCC Clue 1: The twin towers reflection points to the starting line." },
-    { id: "klcc-2", text: "KLCC Clue 2: Follow the jogging path past the children's playground." },
-    { id: "klcc-3", text: "KLCC Clue 3: The fountain show hides coordinates in its rhythm." },
-    { id: "klcc-4", text: "KLCC Clue 4: Between the whale sculpture and the wading pool." },
-    { id: "klcc-5", text: "KLCC Clue 5: The skybridge view reveals the final destination." },
+    { id: "klcc-1", text: "What is this bridge?" },
+    { id: "klcc-2", text: "Azizulhasni \"The Pocket Rocketman\" Awang" },
+    { id: "klcc-3", text: "someone may find the code sitting with remarkably bad posture" },
+    { id: "klcc-4", text: "have you checked both sides of the bridge?" },
+    { id: "klcc-5", text: "take a seat and stretch your neck" },
   ],
 };

@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { database } from "../lib/firebase";
-import { ref, onValue, update, push } from "firebase/database";
+import { ref, onValue, update, push, get, increment } from "firebase/database";
+import { TARGET_LOCATIONS, CLUSTER_NAMES, CLUSTER_CLUES, TargetLocation } from "../lib/locations";
 
 // Haversine formula to calculate distance between two coordinates in meters
 function getDistanceInMeters(lat1: number, lon1: number, lat2: number, lon2: number): number {
@@ -22,36 +23,7 @@ function getDistanceInMeters(lat1: number, lon1: number, lat2: number, lon2: num
   return Math.round(R * c);
 }
 
-// Type definition for target locations
-interface TargetLocation {
-  id: number;
-  cluster: number;
-  name: string;
-  lat: number;
-  lng: number;
-}
-
-// 🎯 TARGET LOCATIONS: 5 POIs per cluster
-const TARGET_LOCATIONS: TargetLocation[] = [
-  // Cluster 1
-  { id: 1, cluster: 1, name: "Checkpoint A", lat: 3.116576, lng: 101.657091 },
-  { id: 2, cluster: 1, name: "Checkpoint B", lat: 3.117301, lng: 101.656851 },
-  { id: 3, cluster: 1, name: "Checkpoint C", lat: 3.117500, lng: 101.656500 },
-  { id: 4, cluster: 1, name: "Checkpoint D", lat: 3.116800, lng: 101.657500 },
-  { id: 5, cluster: 1, name: "Checkpoint E", lat: 3.116200, lng: 101.656200 },
-  // Cluster 2
-  { id: 6, cluster: 2, name: "Checkpoint A", lat: 3.118000, lng: 101.657500 },
-  { id: 7, cluster: 2, name: "Checkpoint B", lat: 3.118500, lng: 101.657800 },
-  { id: 8, cluster: 2, name: "Checkpoint C", lat: 3.118200, lng: 101.658200 },
-  { id: 9, cluster: 2, name: "Checkpoint D", lat: 3.118800, lng: 101.657200 },
-  { id: 10, cluster: 2, name: "Checkpoint E", lat: 3.119200, lng: 101.658500 },
-  // Cluster 3
-  { id: 11, cluster: 3, name: "Checkpoint A", lat: 3.119000, lng: 101.658000 },
-  { id: 12, cluster: 3, name: "Checkpoint B", lat: 3.119500, lng: 101.658800 },
-  { id: 13, cluster: 3, name: "Checkpoint C", lat: 3.119800, lng: 101.657800 },
-  { id: 14, cluster: 3, name: "Checkpoint D", lat: 3.120200, lng: 101.658200 },
-  { id: 15, cluster: 3, name: "Checkpoint E", lat: 3.120500, lng: 101.659000 },
-];
+// (TargetLocation, TARGET_LOCATIONS, CLUSTER_NAMES, CLUSTER_CLUES imported from lib/locations.ts)
 
 const WIN_RADIUS = 10; // Success within 10 meters
 
@@ -82,6 +54,13 @@ export default function Home() {
   // Tracking State
   const [latestCoords, setLatestCoords] = useState<{lat: number, lng: number} | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  // Clue Economy State
+  const [activeTab, setActiveTab] = useState<'tracker' | 'inventory'>('tracker');
+  const [unlockedClues, setUnlockedClues] = useState<Record<string, boolean>>({});
+  const [revealedClue, setRevealedClue] = useState<{ text: string } | null>(null);
+  const [isCardFlipped, setIsCardFlipped] = useState(false);
+  const [isBuying, setIsBuying] = useState(false);
 
   const watchIdRef = useRef<number | null>(null);
 
@@ -160,6 +139,17 @@ export default function Home() {
       unsubTokens();
       unsubCompleted();
     };
+  }, [selectedTeam]);
+
+  // 2b. Unlocked Clues
+  useEffect(() => {
+    if (selectedTeam === null) return;
+    const cluesRef = ref(database, `teams/${selectedTeam}/unlockedClues`);
+    const unsub = onValue(cluesRef, (snapshot) => {
+      const data = snapshot.val();
+      setUnlockedClues(data ? data : {});
+    });
+    return () => unsub();
   }, [selectedTeam]);
 
   // 3. Mission Status Queue
@@ -271,11 +261,42 @@ export default function Home() {
   const handleLogout = () => {
     setSelectedTeam(null);
     setLatestCoords(null);
+    setActiveTab('tracker');
     if (watchIdRef.current !== null) {
       navigator.geolocation.clearWatch(watchIdRef.current);
       watchIdRef.current = null;
     }
   };
+
+  // Buy a random clue from the current cluster
+  const buyClue = useCallback(async () => {
+    if (!selectedTeam || isBuying || tokenCount < 1) return;
+    setIsBuying(true);
+    try {
+      const cluesForCluster = CLUSTER_CLUES[globalActiveCluster] || [];
+      const available = cluesForCluster.filter(c => !unlockedClues[c.id]);
+      if (available.length === 0) { setIsBuying(false); return; }
+
+      const randomClue = available[Math.floor(Math.random() * available.length)];
+
+      // Atomic Firebase update: deduct 1 token + save clue
+      const teamRef = ref(database, `teams/${selectedTeam}`);
+      await update(teamRef, {
+        token_count: increment(-1),
+        [`unlockedClues/${randomClue.id}`]: true,
+      });
+
+      // Trigger card flip reveal
+      setRevealedClue({ text: randomClue.text });
+      setIsCardFlipped(false);
+      // Slight delay then flip
+      setTimeout(() => setIsCardFlipped(true), 100);
+    } catch (err) {
+      console.error("Error buying clue:", err);
+    } finally {
+      setIsBuying(false);
+    }
+  }, [selectedTeam, isBuying, tokenCount, globalActiveCluster, unlockedClues]);
 
   // --- UI: LOGIN ---
   if (selectedTeam === null) {
@@ -412,7 +433,7 @@ export default function Home() {
             <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
           </span>
           <span className="text-white font-bold text-sm tracking-wide">
-            Active Phase: Cluster {globalActiveCluster}
+            Active Phase: {CLUSTER_NAMES[globalActiveCluster]}
           </span>
         </div>
       </div>
@@ -431,124 +452,225 @@ export default function Home() {
         </div>
       </div>
 
-      {/* FLOATING CHECKLIST UI (Mobile: Top, Desktop: Side) */}
-      <div className="relative z-40 mt-36 md:fixed md:top-32 md:right-8 w-full max-w-sm md:w-80 bg-white/5 backdrop-blur-2xl border border-white/20 rounded-[2rem] p-5 shadow-2xl flex-shrink-0">
-        <h3 className="text-white font-bold text-xs uppercase tracking-widest mb-4 opacity-80">
-          Cluster {globalActiveCluster} Objectives
-        </h3>
-        <div className="space-y-3">
-          {clusterTargets.map(poi => {
-            const isCompleted = completedPOIs.includes(poi.id);
-            const isActive = activeTarget?.id === poi.id;
+      {/* === TAB: TRACKER === */}
+      {activeTab === 'tracker' && (
+        <>
+          {/* FLOATING CHECKLIST UI (Mobile: Top, Desktop: Side) */}
+          <div className="relative z-40 mt-36 md:fixed md:top-32 md:right-8 w-full max-w-sm md:w-80 bg-white/5 backdrop-blur-2xl border border-white/20 rounded-[2rem] p-5 shadow-2xl flex-shrink-0">
+            <h3 className="text-white font-bold text-xs uppercase tracking-widest mb-4 opacity-80">
+              {CLUSTER_NAMES[globalActiveCluster]} Objectives
+            </h3>
+            <div className="space-y-3">
+              {clusterTargets.map(poi => {
+                const isCompleted = completedPOIs.includes(poi.id);
+                const isActive = activeTarget?.id === poi.id;
+                
+                let statusClasses = "opacity-40 text-slate-400";
+                let icon = "⚪";
+                
+                if (isCompleted) {
+                  statusClasses = "line-through opacity-40 text-slate-500";
+                  icon = "✅";
+                } else if (isActive) {
+                  statusClasses = "opacity-100 font-bold text-white bg-white/10 rounded-xl px-3 py-2 -ml-3 border border-white/20 shadow-[0_0_15px_rgba(255,255,255,0.1)]";
+                  icon = "📍";
+                }
+
+                return (
+                  <div key={poi.id} className={`flex items-center space-x-3 text-sm transition-all duration-500 ${statusClasses}`}>
+                    <span className="flex-shrink-0">{icon}</span>
+                    <span className="truncate">{poi.name}</span>
+                    {isActive && minDistance !== null && (
+                      <span className="ml-auto flex-shrink-0 text-xs text-blue-300 font-mono font-bold animate-pulse">
+                        {minDistance}m
+                      </span>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* TRACKING CENTER CARD */}
+          <div className="relative z-10 max-w-md w-full bg-white/5 backdrop-blur-3xl rounded-[2.5rem] p-8 shadow-2xl border border-white/10 mt-8 md:mt-auto md:mb-auto">
             
-            let statusClasses = "opacity-40 text-slate-400";
-            let icon = "⚪";
-            
-            if (isCompleted) {
-              statusClasses = "line-through opacity-40 text-slate-500";
-              icon = "✅";
-            } else if (isActive) {
-              statusClasses = "opacity-100 font-bold text-white bg-white/10 rounded-xl px-3 py-2 -ml-3 border border-white/20 shadow-[0_0_15px_rgba(255,255,255,0.1)]";
-              icon = "📍";
-            }
+            {activeTarget ? (
+              <div className="p-6 bg-black/20 backdrop-blur-md rounded-3xl border border-white/5 shadow-inner text-center">
+                <h2 className="text-blue-300 text-xs uppercase tracking-widest font-bold mb-2 animate-pulse">
+                  Active Target
+                </h2>
+                <p className={`text-2xl font-bold text-white tracking-tight`}>
+                  {activeTarget.name}
+                </p>
+              </div>
+            ) : (
+              <div className="p-6 bg-emerald-500/20 backdrop-blur-md rounded-3xl border border-emerald-500/50 shadow-inner text-center">
+                <p className="text-2xl font-bold text-emerald-300 tracking-tight">{CLUSTER_NAMES[globalActiveCluster]} Complete!</p>
+              </div>
+            )}
+
+            {activeTarget && minDistance !== null ? (
+              <div className={`py-4 text-center ${distanceAnimateClass}`}>
+                <p className="text-slate-500 text-xs uppercase tracking-widest font-bold mb-2">
+                  Distance
+                </p>
+                <div className="flex items-baseline justify-center space-x-1">
+                  <p className="text-7xl font-bold text-white tracking-tighter tabular-nums drop-shadow-lg">
+                    {minDistance > 1000 ? (minDistance / 1000).toFixed(2) : minDistance}
+                  </p>
+                  <span className="text-2xl font-medium text-slate-400">
+                    {minDistance > 1000 ? "km" : "m"}
+                  </span>
+                </div>
+              </div>
+            ) : activeTarget ? (
+              <div className="py-12 text-center flex flex-col items-center">
+                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mb-4"></div>
+                 <p className="text-slate-400 font-medium">Acquiring GPS...</p>
+              </div>
+            ) : (
+              <div className="py-8 text-center">
+                 <span className="text-6xl block mb-4">🎉</span>
+                 <p className="text-slate-400 font-medium">Await further instructions from HQ.</p>
+              </div>
+            )}
+
+            {error && (
+              <div className="bg-red-500/20 backdrop-blur-xl text-red-200 p-4 rounded-2xl text-sm font-medium border border-red-500/30 mb-4">
+                {error}
+              </div>
+            )}
+
+            {/* CONTROLS */}
+            <div className="space-y-4 mt-6">
+              {activeTarget && minDistance !== null && (
+                <>
+                  {missionStatus === 'pending' ? (
+                    <div className="w-full bg-blue-500/20 text-blue-200 border border-blue-500/50 font-bold text-lg py-5 px-8 rounded-full flex justify-center items-center space-x-3 shadow-inner">
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-200"></div>
+                      <span>Waiting for Admin...</span>
+                    </div>
+                  ) : missionStatus === 'rejected' ? (
+                    <button
+                      onClick={submitMission}
+                      disabled={minDistance > WIN_RADIUS}
+                      className="w-full bg-red-500/20 hover:bg-red-500/40 text-red-200 border border-red-500/50 font-bold text-lg py-5 px-8 rounded-full shadow-[0_0_20px_rgba(239,68,68,0.2)] active:scale-95 transition-all duration-300 disabled:opacity-50 disabled:active:scale-100"
+                    >
+                      Mission Rejected! Try Again
+                    </button>
+                  ) : (
+                    <button
+                      onClick={submitMission}
+                      disabled={minDistance > WIN_RADIUS}
+                      className={`w-full font-bold text-lg py-5 px-8 rounded-full active:scale-95 transition-all duration-300 ${
+                        minDistance <= WIN_RADIUS
+                          ? "bg-emerald-500/20 hover:bg-emerald-500/40 text-emerald-200 border border-emerald-500/50 shadow-[0_0_20px_rgba(16,185,129,0.2)]"
+                          : "bg-slate-800/50 text-slate-400 border border-slate-700 cursor-not-allowed opacity-50 active:scale-100"
+                      }`}
+                    >
+                      {minDistance <= WIN_RADIUS ? "Submit Mission to HQ" : `Get closer to interact (${minDistance}m)`}
+                    </button>
+                  )}
+                </>
+              )}
+
+              {/* BUY CLUE BUTTON */}
+              {(() => {
+                const cluesForCluster = CLUSTER_CLUES[globalActiveCluster] || [];
+                const availableCount = cluesForCluster.filter(c => !unlockedClues[c.id]).length;
+                const allUnlocked = availableCount === 0;
+
+                return (
+                  <button
+                    onClick={buyClue}
+                    disabled={tokenCount < 1 || allUnlocked || isBuying}
+                    className={`w-full font-bold text-lg py-5 px-8 rounded-full active:scale-95 transition-all duration-300 flex items-center justify-center space-x-3 ${
+                      tokenCount >= 1 && !allUnlocked
+                        ? "bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 border border-amber-500/40 shadow-[0_0_20px_rgba(245,158,11,0.15)]"
+                        : "bg-slate-800/50 text-slate-500 border border-slate-700 cursor-not-allowed opacity-50 active:scale-100"
+                    }`}
+                  >
+                    {isBuying ? (
+                      <>
+                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-amber-200"></div>
+                        <span>Opening...</span>
+                      </>
+                    ) : allUnlocked ? (
+                      <span>All Clues Unlocked ✨</span>
+                    ) : (
+                      <>
+                        <span>🪙</span>
+                        <span>Buy Clue (1 Token)</span>
+                        <span className="text-sm opacity-60">({availableCount} left)</span>
+                      </>
+                    )}
+                  </button>
+                );
+              })()}
+
+              <button
+                onClick={handleLogout}
+                className="w-full bg-white/5 hover:bg-white/10 text-white font-medium text-lg py-5 px-8 rounded-full active:scale-95 transition-all duration-300 border border-white/10"
+              >
+                Log Out
+              </button>
+            </div>
+
+          </div>
+        </>
+      )}
+
+      {/* === TAB: INVENTORY === */}
+      {activeTab === 'inventory' && (
+        <div className="relative z-10 mt-36 max-w-lg w-full space-y-6 pb-28">
+          <div className="text-center mb-2">
+            <h2 className="text-3xl font-extrabold text-white tracking-tight">📦 Clue Inventory</h2>
+            <p className="text-slate-400 text-sm font-medium mt-1">Your team&apos;s collected intelligence</p>
+          </div>
+
+          {Object.entries(CLUSTER_NAMES).map(([clusterKey, clusterName]) => {
+            const clusterNum = Number(clusterKey);
+            const clues = CLUSTER_CLUES[clusterNum] || [];
 
             return (
-              <div key={poi.id} className={`flex items-center space-x-3 text-sm transition-all duration-500 ${statusClasses}`}>
-                <span className="flex-shrink-0">{icon}</span>
-                <span className="truncate">{poi.name}</span>
-                {isActive && minDistance !== null && (
-                  <span className="ml-auto flex-shrink-0 text-xs text-blue-300 font-mono font-bold animate-pulse">
-                    {minDistance}m
+              <div key={clusterNum} className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-[2rem] p-6 shadow-2xl">
+                <h3 className="text-white font-bold text-sm uppercase tracking-widest mb-4 flex items-center space-x-2">
+                  <span>{clusterNum === 1 ? '🏛️' : '🏙️'}</span>
+                  <span>{clusterName}</span>
+                  <span className="ml-auto text-xs text-slate-400 font-medium normal-case tracking-normal">
+                    {clues.filter(c => unlockedClues[c.id]).length}/{clues.length}
                   </span>
-                )}
+                </h3>
+                <div className="space-y-3">
+                  {clues.map((clue) => {
+                    const isUnlocked = !!unlockedClues[clue.id];
+                    return (
+                      <div
+                        key={clue.id}
+                        className={`p-4 rounded-2xl border transition-all duration-300 ${
+                          isUnlocked
+                            ? "bg-emerald-500/10 border-emerald-500/30"
+                            : "bg-black/20 border-white/5 opacity-40"
+                        }`}
+                      >
+                        {isUnlocked ? (
+                          <div className="flex items-start space-x-3">
+                            <span className="text-lg flex-shrink-0 mt-0.5">🔓</span>
+                            <p className="text-white text-sm font-medium leading-relaxed">{clue.text}</p>
+                          </div>
+                        ) : (
+                          <div className="flex items-center space-x-3">
+                            <span className="text-lg flex-shrink-0">🔒</span>
+                            <p className="text-slate-500 text-sm font-medium italic">Locked — Purchase to reveal</p>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             );
           })}
-        </div>
-      </div>
-
-      {/* TRACKING CENTER CARD */}
-      <div className="relative z-10 max-w-md w-full bg-white/5 backdrop-blur-3xl rounded-[2.5rem] p-8 shadow-2xl border border-white/10 mt-8 md:mt-auto md:mb-auto">
-        
-        {activeTarget ? (
-          <div className="p-6 bg-black/20 backdrop-blur-md rounded-3xl border border-white/5 shadow-inner text-center">
-            <h2 className="text-blue-300 text-xs uppercase tracking-widest font-bold mb-2 animate-pulse">
-              Active Target
-            </h2>
-            <p className={`text-2xl font-bold text-white tracking-tight`}>
-              {activeTarget.name}
-            </p>
-          </div>
-        ) : (
-          <div className="p-6 bg-emerald-500/20 backdrop-blur-md rounded-3xl border border-emerald-500/50 shadow-inner text-center">
-            <p className="text-2xl font-bold text-emerald-300 tracking-tight">Cluster Complete!</p>
-          </div>
-        )}
-
-        {activeTarget && minDistance !== null ? (
-          <div className={`py-4 text-center ${distanceAnimateClass}`}>
-            <p className="text-slate-500 text-xs uppercase tracking-widest font-bold mb-2">
-              Distance
-            </p>
-            <div className="flex items-baseline justify-center space-x-1">
-              <p className="text-7xl font-bold text-white tracking-tighter tabular-nums drop-shadow-lg">
-                {minDistance > 1000 ? (minDistance / 1000).toFixed(2) : minDistance}
-              </p>
-              <span className="text-2xl font-medium text-slate-400">
-                {minDistance > 1000 ? "km" : "m"}
-              </span>
-            </div>
-          </div>
-        ) : activeTarget ? (
-          <div className="py-12 text-center flex flex-col items-center">
-             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mb-4"></div>
-             <p className="text-slate-400 font-medium">Acquiring GPS...</p>
-          </div>
-        ) : (
-          <div className="py-8 text-center">
-             <span className="text-6xl block mb-4">🎉</span>
-             <p className="text-slate-400 font-medium">Await further instructions from HQ.</p>
-          </div>
-        )}
-
-        {error && (
-          <div className="bg-red-500/20 backdrop-blur-xl text-red-200 p-4 rounded-2xl text-sm font-medium border border-red-500/30 mb-4">
-            {error}
-          </div>
-        )}
-
-        {/* CONTROLS */}
-        <div className="space-y-4 mt-6">
-          {activeTarget && minDistance !== null && (
-            <>
-              {missionStatus === 'pending' ? (
-                <div className="w-full bg-blue-500/20 text-blue-200 border border-blue-500/50 font-bold text-lg py-5 px-8 rounded-full flex justify-center items-center space-x-3 shadow-inner">
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-200"></div>
-                  <span>Waiting for Admin...</span>
-                </div>
-              ) : missionStatus === 'rejected' ? (
-                <button
-                  onClick={submitMission}
-                  disabled={minDistance > WIN_RADIUS}
-                  className="w-full bg-red-500/20 hover:bg-red-500/40 text-red-200 border border-red-500/50 font-bold text-lg py-5 px-8 rounded-full shadow-[0_0_20px_rgba(239,68,68,0.2)] active:scale-95 transition-all duration-300 disabled:opacity-50 disabled:active:scale-100"
-                >
-                  Mission Rejected! Try Again
-                </button>
-              ) : (
-                <button
-                  onClick={submitMission}
-                  disabled={minDistance > WIN_RADIUS}
-                  className={`w-full font-bold text-lg py-5 px-8 rounded-full active:scale-95 transition-all duration-300 ${
-                    minDistance <= WIN_RADIUS
-                      ? "bg-emerald-500/20 hover:bg-emerald-500/40 text-emerald-200 border border-emerald-500/50 shadow-[0_0_20px_rgba(16,185,129,0.2)]"
-                      : "bg-slate-800/50 text-slate-400 border border-slate-700 cursor-not-allowed opacity-50 active:scale-100"
-                  }`}
-                >
-                  {minDistance <= WIN_RADIUS ? "Submit Mission to HQ" : `Get closer to interact (${minDistance}m)`}
-                </button>
-              )}
-            </>
-          )}
 
           <button
             onClick={handleLogout}
@@ -557,10 +679,82 @@ export default function Home() {
             Log Out
           </button>
         </div>
+      )}
 
+      {/* CARD FLIP OVERLAY */}
+      {revealedClue && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/70 backdrop-blur-md">
+          <div className="animate-fade-in-scale w-full max-w-sm">
+            <div className={`perspective-container ${isCardFlipped ? 'card-flipped' : ''}`}>
+              <div className="card-inner" style={{ minHeight: '280px' }}>
+                {/* FRONT — Mystery Card */}
+                <div className="card-front bg-gradient-to-br from-amber-600 via-amber-500 to-yellow-400 flex flex-col items-center justify-center p-8 border-2 border-amber-300/50 shadow-[0_0_40px_rgba(245,158,11,0.3)]">
+                  <div className="w-20 h-20 rounded-full bg-white/20 flex items-center justify-center mb-4 backdrop-blur-sm border border-white/30">
+                    <span className="text-4xl">❓</span>
+                  </div>
+                  <p className="text-amber-950 font-extrabold text-xl tracking-tight">Mystery Clue</p>
+                  <p className="text-amber-800 text-sm font-medium mt-1">Flipping...</p>
+                </div>
+                {/* BACK — Revealed Clue */}
+                <div className="card-back bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex flex-col items-center justify-center p-8 border-2 border-emerald-500/30 shadow-[0_0_40px_rgba(16,185,129,0.2)]">
+                  <div className="w-16 h-16 rounded-full bg-emerald-500/20 flex items-center justify-center mb-4 border border-emerald-500/30">
+                    <span className="text-3xl">🔓</span>
+                  </div>
+                  <p className="text-white text-center font-medium leading-relaxed text-sm px-2">
+                    {revealedClue.text}
+                  </p>
+                </div>
+              </div>
+            </div>
+            {isCardFlipped && (
+              <button
+                onClick={() => { setRevealedClue(null); setIsCardFlipped(false); }}
+                className="w-full mt-6 bg-white text-black font-bold text-lg py-4 rounded-full shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:shadow-[0_0_30px_rgba(255,255,255,0.4)] hover:scale-[1.02] active:scale-95 transition-all duration-300"
+              >
+                Got it!
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* BOTTOM NAVIGATION BAR */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 pb-[env(safe-area-inset-bottom)]">
+        <div className="bg-black/40 backdrop-blur-3xl border-t border-white/10 shadow-[0_-4px_30px_rgba(0,0,0,0.3)]">
+          <div className="max-w-lg mx-auto flex">
+            <button
+              onClick={() => setActiveTab('tracker')}
+              className={`flex-1 flex flex-col items-center py-3 pt-4 transition-all duration-300 ${
+                activeTab === 'tracker'
+                  ? 'text-white'
+                  : 'text-slate-500 hover:text-slate-300'
+              }`}
+            >
+              <span className="text-xl mb-0.5">📍</span>
+              <span className="text-[10px] font-bold uppercase tracking-widest">Tracker</span>
+              {activeTab === 'tracker' && (
+                <div className="w-1 h-1 rounded-full bg-white mt-1"></div>
+              )}
+            </button>
+            <button
+              onClick={() => setActiveTab('inventory')}
+              className={`flex-1 flex flex-col items-center py-3 pt-4 transition-all duration-300 ${
+                activeTab === 'inventory'
+                  ? 'text-white'
+                  : 'text-slate-500 hover:text-slate-300'
+              }`}
+            >
+              <span className="text-xl mb-0.5">📦</span>
+              <span className="text-[10px] font-bold uppercase tracking-widest">Inventory</span>
+              {activeTab === 'inventory' && (
+                <div className="w-1 h-1 rounded-full bg-white mt-1"></div>
+              )}
+            </button>
+          </div>
+        </div>
       </div>
 
-      <p className="relative z-10 mt-8 mb-6 text-slate-500 text-xs font-medium text-center px-6 max-w-sm">
+      <p className="relative z-10 mt-8 mb-20 text-slate-500 text-xs font-medium text-center px-6 max-w-sm">
         Location permissions required.
       </p>
     </main>

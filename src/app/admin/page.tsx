@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { database } from "../../lib/firebase";
 import { ref, onValue, update, get, set, increment } from "firebase/database";
 import Leaderboard from "../../components/Leaderboard";
+import { CLUSTER_NAMES } from "../../lib/locations";
 
 const ADMIN_PASSCODE = "admin123";
 
@@ -241,7 +242,7 @@ export default function AdminDashboard() {
                 <span>Active Cluster</span>
               </h2>
               <div className="flex space-x-3">
-                {[1, 2, 3].map((clusterNum) => (
+                {[1, 2].map((clusterNum) => (
                   <button
                     key={clusterNum}
                     onClick={() => handleClusterChange(clusterNum)}
@@ -251,7 +252,7 @@ export default function AdminDashboard() {
                         : "bg-black/20 text-slate-400 border-white/5 hover:bg-white/10 hover:text-white"
                     }`}
                   >
-                    Cluster {clusterNum}
+                    {CLUSTER_NAMES[clusterNum] || `Cluster ${clusterNum}`}
                   </button>
                 ))}
               </div>

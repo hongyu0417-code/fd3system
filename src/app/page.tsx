@@ -25,7 +25,7 @@ function getDistanceInMeters(lat1: number, lon1: number, lat2: number, lon2: num
 
 // (TargetLocation, TARGET_LOCATIONS, CLUSTER_NAMES, CLUSTER_CLUES imported from lib/locations.ts)
 
-const WIN_RADIUS = 10; // Success within 10 meters
+const WIN_RADIUS = 15; // Success within 15 meters
 
 type MissionStatus = 'pending' | 'approved' | 'rejected' | null;
 
@@ -63,6 +63,7 @@ export default function Home() {
   const [isBuying, setIsBuying] = useState(false);
 
   const watchIdRef = useRef<number | null>(null);
+  const lastGpsUpdateRef = useRef<number>(0);
 
   // --- DERIVED STATE: Auto-Targeting ---
   const { activeTarget, minDistance, clusterTargets } = useMemo(() => {
@@ -199,6 +200,9 @@ export default function Home() {
 
       watchIdRef.current = navigator.geolocation.watchPosition(
         (position: GeolocationPosition) => {
+          const now = Date.now();
+          if (now - lastGpsUpdateRef.current < 1000) return; // Throttle: max 1 update/sec
+          lastGpsUpdateRef.current = now;
           setLatestCoords({
             lat: position.coords.latitude,
             lng: position.coords.longitude
@@ -515,10 +519,10 @@ export default function Home() {
                   Distance
                 </p>
                 <div className="flex items-baseline justify-center space-x-1">
-                  <p className="text-7xl font-bold text-white tracking-tighter tabular-nums drop-shadow-lg">
-                    {minDistance > 1000 ? (minDistance / 1000).toFixed(2) : minDistance}
+                  <p className="text-7xl font-bold text-white tracking-tighter tabular-nums drop-shadow-lg" style={{ minWidth: '3ch' }}>
+                    {minDistance > 1000 ? (minDistance / 1000).toFixed(1) : Math.round(minDistance)}
                   </p>
-                  <span className="text-2xl font-medium text-slate-400">
+                  <span className="text-2xl font-medium text-slate-400 tabular-nums">
                     {minDistance > 1000 ? "km" : "m"}
                   </span>
                 </div>

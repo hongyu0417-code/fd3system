@@ -1,27 +1,117 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /* ============================================================
-   Global: Prevent white flash / overscroll on mobile
+   Global Expedition — Theme 2 Foundation
    ============================================================ */
 html,
 body {
-  background-color: #020617; /* slate-950 */
+  background-color: #0a1a0f; /* forest-950 */
   overscroll-behavior: none;
   -webkit-overflow-scrolling: touch;
+  font-family: 'Inter', system-ui, sans-serif;
 }
 
 /* ============================================================
-   Card Flip Animation System
+   Topographical Map Pattern Overlay
    ============================================================ */
+.topo-bg {
+  position: relative;
+}
 
-/* Perspective container — enables 3D space for children */
+.topo-bg::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.08;
+  background-image:
+    /* Layer 1 — large contour curves */
+    radial-gradient(ellipse 600px 200px at 20% 30%, transparent 60%, rgba(255,255,255,0.3) 60.5%, transparent 61%),
+    radial-gradient(ellipse 500px 180px at 70% 20%, transparent 58%, rgba(255,255,255,0.25) 58.5%, transparent 59%),
+    radial-gradient(ellipse 450px 160px at 40% 65%, transparent 55%, rgba(255,255,255,0.3) 55.5%, transparent 56%),
+    radial-gradient(ellipse 550px 190px at 80% 70%, transparent 62%, rgba(255,255,255,0.2) 62.5%, transparent 63%),
+    /* Layer 2 — medium contour curves */
+    radial-gradient(ellipse 350px 130px at 30% 50%, transparent 50%, rgba(255,255,255,0.25) 50.5%, transparent 51%),
+    radial-gradient(ellipse 400px 140px at 60% 40%, transparent 52%, rgba(255,255,255,0.2) 52.5%, transparent 53%),
+    radial-gradient(ellipse 320px 120px at 15% 80%, transparent 48%, rgba(255,255,255,0.3) 48.5%, transparent 49%),
+    radial-gradient(ellipse 380px 135px at 85% 45%, transparent 54%, rgba(255,255,255,0.2) 54.5%, transparent 55%),
+    /* Layer 3 — tight inner contours */
+    radial-gradient(ellipse 200px 80px at 25% 35%, transparent 45%, rgba(255,255,255,0.2) 45.5%, transparent 46%),
+    radial-gradient(ellipse 250px 90px at 65% 25%, transparent 42%, rgba(255,255,255,0.15) 42.5%, transparent 43%),
+    radial-gradient(ellipse 230px 85px at 45% 70%, transparent 40%, rgba(255,255,255,0.2) 40.5%, transparent 41%),
+    radial-gradient(ellipse 180px 70px at 75% 75%, transparent 38%, rgba(255,255,255,0.15) 38.5%, transparent 39%);
+}
+
+/* ============================================================
+   Expedition Card System
+   ============================================================ */
+.expedition-card {
+  background-color: #fdf8f0;
+  border: 1px solid rgba(235, 224, 205, 0.6);
+  border-radius: 1.25rem;
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.15),
+    0 2px 6px rgba(0, 0, 0, 0.08);
+  color: #1a1a1a;
+}
+
+.expedition-card-dark {
+  background-color: rgba(15, 38, 24, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1.25rem;
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.3),
+    0 2px 6px rgba(0, 0, 0, 0.15);
+  color: #fdf8f0;
+}
+
+/* ============================================================
+   Blaze Accent Buttons
+   ============================================================ */
+.btn-blaze {
+  background: linear-gradient(135deg, #ff8c38, #ff6f1a);
+  color: #fff;
+  font-weight: 700;
+  border: none;
+  border-radius: 0.875rem;
+  box-shadow:
+    0 4px 14px rgba(255, 111, 26, 0.35),
+    0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-blaze:hover {
+  background: linear-gradient(135deg, #ff6f1a, #e85d0a);
+  box-shadow:
+    0 6px 20px rgba(255, 111, 26, 0.45),
+    0 3px 6px rgba(0, 0, 0, 0.15);
+  transform: translateY(-1px);
+}
+
+.btn-blaze:active {
+  transform: scale(0.97) translateY(0);
+}
+
+.btn-blaze:disabled {
+  background: rgba(255, 111, 26, 0.2);
+  color: rgba(255, 255, 255, 0.4);
+  box-shadow: none;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ============================================================
+   Card Flip Animation System (preserved)
+   ============================================================ */
 .perspective-container {
   perspective: 1000px;
 }
 
-/* The inner card that actually rotates */
 .card-inner {
   position: relative;
   width: 100%;
@@ -30,33 +120,28 @@ body {
   transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Trigger the flip */
 .card-flipped .card-inner {
   transform: rotateY(180deg);
 }
 
-/* Shared face styles */
 .card-front,
 .card-back {
   position: absolute;
   inset: 0;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
-  border-radius: 1.5rem;
+  border-radius: 1.25rem;
   overflow: hidden;
 }
 
-/* Front face — visible by default */
 .card-front {
   transform: rotateY(0deg);
 }
 
-/* Back face — pre-rotated, revealed on flip */
 .card-back {
   transform: rotateY(180deg);
 }
 
-/* Overlay entrance animation */
 @keyframes fadeInScale {
   from {
     opacity: 0;
@@ -72,7 +157,6 @@ body {
   animation: fadeInScale 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* Shimmer effect for the card back pattern */
 @keyframes shimmer {
   0% { background-position: -200% 0; }
   100% { background-position: 200% 0; }
@@ -81,4 +165,37 @@ body {
 .animate-shimmer {
   background-size: 200% 100%;
   animation: shimmer 3s linear infinite;
+}
+
+/* ============================================================
+   Custom Scrollbar (Admin)
+   ============================================================ */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 143, 56, 0.3);
+  border-radius: 999px;
+}
+
+/* ============================================================
+   Expedition Section Header
+   ============================================================ */
+.section-header {
+  font-weight: 800;
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #1e5631;
+}
+
+.section-header-light {
+  font-weight: 800;
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(253, 248, 240, 0.6);
 }

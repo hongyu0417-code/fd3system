@@ -167,17 +167,17 @@ export default function AdminDashboard() {
 
   if (!isAuthenticated) {
     return (
-      <main className="min-h-[100dvh] relative flex flex-col items-center justify-center p-6 bg-slate-950 overflow-hidden">
+      <main className="min-h-[100dvh] topo-bg relative flex flex-col items-center justify-center p-6 bg-forest-950 overflow-hidden">
         {/* Glowing background */}
-        <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] bg-red-500/10 rounded-full blur-[140px] pointer-events-none"></div>
-        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-purple-500/10 rounded-full blur-[120px] pointer-events-none"></div>
+        <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] bg-emerald-800/10 rounded-full blur-[140px] pointer-events-none"></div>
+        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-blaze-500/8 rounded-full blur-[120px] pointer-events-none"></div>
 
-        <div className="relative z-10 max-w-md w-full bg-white/5 backdrop-blur-3xl rounded-[2.5rem] p-8 shadow-2xl border border-white/10">
+        <div className="relative z-10 max-w-md w-full expedition-card p-8">
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-extrabold text-white tracking-tight drop-shadow-sm mb-2">
+            <h1 className="text-3xl font-extrabold text-forest-800 tracking-tight mb-2">
               Admin Access
             </h1>
-            <p className="text-slate-400 font-medium">Enter passcode to continue</p>
+            <p className="text-forest-600/70 font-medium">Enter passcode to continue</p>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-6">
@@ -189,20 +189,20 @@ export default function AdminDashboard() {
                   setPasscodeInput(e.target.value);
                   setPasscodeError(false);
                 }}
-                className={`w-full bg-black/20 backdrop-blur-md rounded-2xl text-center text-3xl text-white font-bold tracking-widest py-4 focus:outline-none transition-all duration-300 shadow-inner ${passcodeError
-                    ? 'border border-red-500/50 bg-red-500/10'
-                    : 'border border-white/10 focus:border-white/30 focus:bg-white/10'
+                className={`w-full bg-forest-900/8 rounded-2xl text-center text-3xl text-forest-800 font-bold tracking-widest py-4 focus:outline-none transition-all duration-300 ${passcodeError
+                    ? 'border-2 border-red-500/50 bg-red-50'
+                    : 'border border-forest-600/20 focus:border-blaze-500/50 focus:bg-blaze-500/5'
                   }`}
                 placeholder="••••••••"
                 autoFocus
               />
               {passcodeError && (
-                <p className="text-red-400 text-sm font-medium mt-3 text-center">Access Denied</p>
+                <p className="text-red-600 text-sm font-medium mt-3 text-center">Access Denied</p>
               )}
             </div>
             <button
               type="submit"
-              className="w-full bg-white text-black font-bold text-lg py-4 rounded-full shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:shadow-[0_0_30px_rgba(255,255,255,0.4)] hover:scale-[1.02] active:scale-95 transition-all duration-300"
+              className="w-full btn-blaze text-lg py-4 rounded-xl active:scale-95 transition-all duration-300"
             >
               Login
             </button>
@@ -213,19 +213,19 @@ export default function AdminDashboard() {
   }
 
   return (
-    <main className="min-h-[100dvh] bg-slate-950 p-6 md:p-12 text-white relative overflow-x-hidden">
+    <main className="min-h-[100dvh] topo-bg bg-forest-950 p-6 md:p-12 text-cream-100 relative overflow-x-hidden">
       {/* Background Glow */}
-      <div className="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-3xl h-[50vh] bg-blue-500/10 rounded-full blur-[150px] pointer-events-none"></div>
+      <div className="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-3xl h-[50vh] bg-emerald-800/10 rounded-full blur-[150px] pointer-events-none"></div>
 
       <div className="relative z-10 max-w-4xl mx-auto space-y-12">
-        <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/10 pb-6">
+        <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-cream-200/10 pb-6">
           <div>
-            <h1 className="text-3xl font-extrabold tracking-tight">Jiong Xi and Ryan is GOAT</h1>
-            <p className="text-slate-400 font-medium mt-1">Live Game State Management</p>
+            <h1 className="text-3xl font-extrabold tracking-[0.08em] uppercase text-cream-100">Jiong Xi and Ryan is GOAT</h1>
+            <p className="text-cream-200/50 font-medium mt-1">Live Game State Management</p>
           </div>
           <button
             onClick={() => setIsAuthenticated(false)}
-            className="px-6 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full text-sm font-medium transition-all"
+            className="px-6 py-2 bg-forest-800/60 hover:bg-forest-800/80 border border-cream-200/10 rounded-xl text-sm font-semibold text-cream-200 transition-all"
           >
             Lock Terminal
           </button>
@@ -236,8 +236,8 @@ export default function AdminDashboard() {
           <div className="space-y-8">
 
             {/* Game State Controls */}
-            <section className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-[2rem] p-6 shadow-2xl">
-              <h2 className="text-xl font-bold tracking-tight mb-6 flex items-center space-x-2">
+            <section className="expedition-card p-6">
+              <h2 className="text-xl font-extrabold tracking-[0.1em] uppercase text-forest-800 mb-6 flex items-center space-x-2">
                 <span className="text-2xl">🌍</span>
                 <span>Active Cluster</span>
               </h2>
@@ -248,8 +248,8 @@ export default function AdminDashboard() {
                     onClick={() => handleClusterChange(clusterNum)}
                     className={`flex-1 py-3 rounded-xl font-bold transition-all duration-300 border ${
                       activeCluster === clusterNum
-                        ? "bg-blue-500/30 text-blue-200 border-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.3)] scale-105"
-                        : "bg-black/20 text-slate-400 border-white/5 hover:bg-white/10 hover:text-white"
+                        ? "btn-blaze scale-105"
+                        : "bg-forest-800/8 text-forest-700 border-forest-600/15 hover:bg-blaze-500/10 hover:text-forest-900"
                     }`}
                   >
                     {CLUSTER_NAMES[clusterNum] || `Cluster ${clusterNum}`}
@@ -259,33 +259,33 @@ export default function AdminDashboard() {
             </section>
 
             {/* Token Management Section */}
-            <section className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-[2rem] p-6 shadow-2xl">
-              <h2 className="text-xl font-bold tracking-tight mb-6 flex items-center space-x-2">
+            <section className="expedition-card p-6">
+              <h2 className="text-xl font-extrabold tracking-[0.1em] uppercase text-forest-800 mb-6 flex items-center space-x-2">
                 <span className="text-2xl">🪙</span>
                 <span>Token Bank</span>
               </h2>
 
               {loading ? (
                 <div className="animate-pulse space-y-4">
-                  {[1, 2, 3, 4, 5].map(i => <div key={i} className="h-16 bg-white/5 rounded-2xl"></div>)}
+                  {[1, 2, 3, 4, 5].map(i => <div key={i} className="h-16 bg-forest-800/8 rounded-2xl"></div>)}
                 </div>
               ) : (
                 <div className="space-y-3">
                   {teams.map((team) => (
-                    <div key={team.team_id} className="flex items-center justify-between bg-black/20 border border-white/5 p-3 rounded-2xl">
-                      <span className="font-semibold px-2">Group {team.team_id}</span>
+                    <div key={team.team_id} className="flex items-center justify-between bg-forest-800/6 border border-forest-600/10 p-3 rounded-xl">
+                      <span className="font-bold text-forest-800 px-2">Group {team.team_id}</span>
                       <div className="flex items-center space-x-4">
-                        <span className="text-xl font-bold tabular-nums w-8 text-center">{team.token_count}</span>
+                        <span className="text-xl font-extrabold tabular-nums w-8 text-center text-blaze-500">{team.token_count}</span>
                         <div className="flex items-center space-x-2">
                           <button
                             onClick={() => handleTokenChange(team.firebaseKey, -1)}
-                            className="w-10 h-10 flex items-center justify-center bg-red-500/20 text-red-300 hover:bg-red-500/30 rounded-full border border-red-500/30 transition-all active:scale-95"
+                            className="w-10 h-10 flex items-center justify-center bg-red-50 text-red-600 hover:bg-red-100 rounded-xl border border-red-200 font-bold transition-all active:scale-95"
                           >
                             -1
                           </button>
                           <button
                             onClick={() => handleTokenChange(team.firebaseKey, 1)}
-                            className="w-10 h-10 flex items-center justify-center bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30 rounded-full border border-emerald-500/30 transition-all active:scale-95"
+                            className="w-10 h-10 flex items-center justify-center bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-xl border border-emerald-200 font-bold transition-all active:scale-95"
                           >
                             +1
                           </button>
@@ -298,12 +298,12 @@ export default function AdminDashboard() {
             </section>
 
             {/* Pending Missions Queue */}
-            <section className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-[2rem] p-6 shadow-2xl flex flex-col">
-              <h2 className="text-xl font-bold tracking-tight mb-6 flex items-center space-x-3">
+            <section className="expedition-card p-6 flex flex-col">
+              <h2 className="text-xl font-extrabold tracking-[0.1em] uppercase text-forest-800 mb-6 flex items-center space-x-3">
                 <span className="text-2xl">📡</span>
                 <span>Mission Queue</span>
                 {pendingMissions.length > 0 && (
-                  <span className="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full animate-pulse shadow-[0_0_10px_rgba(239,68,68,0.5)]">
+                  <span className="bg-blaze-500 text-white text-xs font-bold px-2 py-1 rounded-full animate-pulse shadow-[0_0_10px_rgba(255,111,26,0.4)]">
                     {pendingMissions.length}
                   </span>
                 )}
@@ -311,32 +311,32 @@ export default function AdminDashboard() {
               
               <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
                 {pendingMissions.length === 0 ? (
-                  <div className="text-center text-sm font-medium text-slate-500 py-8 border border-dashed border-white/10 rounded-2xl bg-black/10">
+                  <div className="text-center text-sm font-semibold text-forest-600/50 py-8 border border-dashed border-forest-600/15 rounded-xl bg-forest-800/4">
                     No pending missions in the queue.
                   </div>
                 ) : (
                   pendingMissions.map((mission) => (
-                    <div key={mission.id} className="bg-black/20 border border-white/5 p-4 rounded-2xl relative overflow-hidden group hover:border-white/20 transition-colors">
-                      <div className="absolute top-0 left-0 w-1 h-full bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]"></div>
+                    <div key={mission.id} className="bg-forest-800/6 border border-forest-600/10 p-4 rounded-xl relative overflow-hidden group hover:border-blaze-500/30 transition-colors">
+                      <div className="absolute top-0 left-0 w-1 h-full bg-blaze-500 shadow-[0_0_8px_rgba(255,111,26,0.4)]"></div>
                       <div className="flex justify-between items-start mb-4 pl-2">
                         <div>
-                          <span className="text-xs font-bold uppercase tracking-widest text-blue-400">Group {mission.teamId}</span>
-                          <h3 className="font-semibold text-lg text-white mt-1">{mission.poiName}</h3>
+                          <span className="text-xs font-extrabold uppercase tracking-widest text-blaze-500">Group {mission.teamId}</span>
+                          <h3 className="font-bold text-lg text-forest-900 mt-1">{mission.poiName}</h3>
                         </div>
-                        <span className="text-xs font-medium bg-white/5 text-slate-300 px-2 py-1 rounded-md border border-white/10">
+                        <span className="text-xs font-bold bg-forest-800/8 text-forest-600 px-2 py-1 rounded-lg border border-forest-600/10">
                           {Math.max(0, Math.floor((Date.now() - mission.timestamp) / 60000))}m ago
                         </span>
                       </div>
                       <div className="flex space-x-3 pl-2">
                         <button
                           onClick={() => handleApprove(mission)}
-                          className="flex-1 py-2 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/30 rounded-xl font-bold transition-all active:scale-95"
+                          className="flex-1 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 rounded-xl font-bold transition-all active:scale-95"
                         >
                           Approve
                         </button>
                         <button
                           onClick={() => handleReject(mission.id)}
-                          className="flex-1 py-2 bg-red-500/20 hover:bg-red-500/30 text-red-300 border border-red-500/30 rounded-xl font-bold transition-all active:scale-95"
+                          className="flex-1 py-2 bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 rounded-xl font-bold transition-all active:scale-95"
                         >
                           Reject
                         </button>
@@ -351,8 +351,8 @@ export default function AdminDashboard() {
 
           {/* RIGHT COLUMN: Leaderboard */}
           <div className="space-y-8">
-            <section className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-[2rem] p-6 shadow-2xl h-full">
-              <h2 className="text-xl font-bold tracking-tight mb-6 flex items-center space-x-2">
+            <section className="expedition-card p-6 h-full">
+              <h2 className="text-xl font-extrabold tracking-[0.1em] uppercase text-forest-800 mb-6 flex items-center space-x-2">
                 <span className="text-2xl">🏆</span>
                 <span>Live Leaderboard</span>
               </h2>

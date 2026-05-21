@@ -305,19 +305,19 @@ export default function Home() {
   // --- UI: LOGIN ---
   if (selectedTeam === null) {
     return (
-      <main className="min-h-[100dvh] relative flex flex-col items-center justify-center p-6 bg-slate-950 overflow-hidden">
-        {/* Subtle glowing background mesh */}
-        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-blue-500/20 rounded-full blur-[120px] pointer-events-none"></div>
-        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-purple-500/20 rounded-full blur-[120px] pointer-events-none"></div>
+      <main className="min-h-[100dvh] topo-bg relative flex flex-col items-center justify-center p-6 bg-forest-950 overflow-hidden">
+        {/* Subtle ambient glow */}
+        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-emerald-800/15 rounded-full blur-[120px] pointer-events-none"></div>
+        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-blaze-500/10 rounded-full blur-[120px] pointer-events-none"></div>
 
-        <div className="relative z-10 max-w-md w-full bg-white/5 backdrop-blur-3xl rounded-[2.5rem] p-8 shadow-2xl border border-white/10">
+        <div className="relative z-10 max-w-md w-full expedition-card p-8">
           {pendingTeam === null ? (
             <>
               <div className="text-center mb-8">
-                <h1 className="text-4xl font-extrabold text-white tracking-tight drop-shadow-sm mb-2">
+                <h1 className="text-4xl font-extrabold text-forest-800 tracking-tight mb-2">
                   Select Team
                 </h1>
-                <p className="text-slate-400 font-medium">Choose your group to begin</p>
+                <p className="text-forest-600/70 font-medium">Choose your group to begin</p>
               </div>
 
               <div className="space-y-4">
@@ -329,10 +329,10 @@ export default function Home() {
                       setPinError(false);
                       setPinInput("");
                     }}
-                    className="group w-full bg-white/5 hover:bg-white/10 text-white font-medium text-lg py-4 px-6 rounded-3xl transition-all duration-300 border border-white/5 hover:border-white/20 flex justify-between items-center shadow-[0_4px_24px_rgba(0,0,0,0.2)] hover:shadow-[0_8px_32px_rgba(255,255,255,0.05)]"
+                    className="group w-full bg-forest-900/10 hover:bg-blaze-500/10 text-forest-800 font-semibold text-lg py-4 px-6 rounded-2xl transition-all duration-300 border border-forest-600/15 hover:border-blaze-500/40 flex justify-between items-center shadow-[0_2px_8px_rgba(0,0,0,0.06)] hover:shadow-[0_4px_16px_rgba(255,111,26,0.1)]"
                   >
                     <span className="tracking-wide">Group {teamId}</span>
-                    <span className="text-slate-500 group-hover:text-white transition-colors duration-300 transform group-hover:translate-x-1">&rarr;</span>
+                    <span className="text-forest-600/40 group-hover:text-blaze-500 transition-colors duration-300 transform group-hover:translate-x-1">&rarr;</span>
                   </button>
                 ))}
               </div>
@@ -340,10 +340,10 @@ export default function Home() {
           ) : (
             <div className="text-center">
               <div className="mb-8">
-                <h1 className="text-3xl font-extrabold text-white tracking-tight drop-shadow-sm mb-2">
+                <h1 className="text-3xl font-extrabold text-forest-800 tracking-tight mb-2">
                   Group {pendingTeam}
                 </h1>
-                <p className="text-slate-400 font-medium">Enter your password</p>
+                <p className="text-forest-600/70 font-medium">Enter your password</p>
               </div>
 
               <form onSubmit={handlePinSubmit} className="space-y-6">
@@ -355,16 +355,16 @@ export default function Home() {
                       setPinInput(e.target.value);
                       setPinError(false);
                     }}
-                    className={`w-full bg-black/20 backdrop-blur-md rounded-2xl text-center text-2xl text-white font-bold tracking-widest py-4 focus:outline-none transition-all duration-300 shadow-inner ${
+                    className={`w-full bg-forest-900/8 rounded-2xl text-center text-2xl text-forest-800 font-bold tracking-widest py-4 focus:outline-none transition-all duration-300 ${
                       pinError 
-                        ? 'border border-red-500/50 bg-red-500/10 placeholder:text-red-300/50' 
-                        : 'border border-white/10 focus:border-white/30 focus:bg-white/10 placeholder:text-white/20'
+                        ? 'border-2 border-red-500/50 bg-red-50 placeholder:text-red-300/50' 
+                        : 'border border-forest-600/20 focus:border-blaze-500/50 focus:bg-blaze-500/5 placeholder:text-forest-600/30'
                     }`}
                     placeholder="Password"
                     autoFocus
                   />
                   {pinError && (
-                    <p className="text-red-400 text-sm font-medium mt-3">Incorrect password. Please try again.</p>
+                    <p className="text-red-600 text-sm font-medium mt-3">Incorrect password. Please try again.</p>
                   )}
                 </div>
 
@@ -376,13 +376,13 @@ export default function Home() {
                       setPinInput("");
                       setPinError(false);
                     }}
-                    className="flex-1 bg-white/5 hover:bg-white/10 text-white font-medium py-4 rounded-full transition-all duration-300 border border-white/10 active:scale-95"
+                    className="flex-1 bg-forest-900/8 hover:bg-forest-900/15 text-forest-800 font-medium py-4 rounded-xl transition-all duration-300 border border-forest-600/15 active:scale-95"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="flex-1 bg-white text-black font-bold py-4 rounded-full shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:shadow-[0_0_30px_rgba(255,255,255,0.4)] hover:scale-[1.02] active:scale-95 transition-all duration-300 disabled:opacity-50 disabled:hover:scale-100"
+                    className="flex-1 btn-blaze py-4 rounded-xl text-lg active:scale-95 transition-all duration-300 disabled:opacity-50 disabled:hover:scale-100"
                     disabled={pinInput.length === 0}
                   >
                     Submit
@@ -399,44 +399,44 @@ export default function Home() {
   // --- UI: TRACKING ---
   
   // Dynamic Background and Glow Logic
-  let bgGradient = "from-slate-950 to-slate-900"; 
-  let glowColor = "bg-slate-500/20";
+  let bgGradient = "from-forest-950 to-forest-900"; 
+  let glowColor = "bg-forest-600/20";
   let distanceAnimateClass = "";
 
   if (activeTarget && minDistance !== null) {
     if (minDistance > 1000) {
-      bgGradient = "from-blue-950 to-slate-950";
-      glowColor = "bg-blue-500/30";
+      bgGradient = "from-forest-950 to-forest-900";
+      glowColor = "bg-emerald-700/20";
     } else if (minDistance > 500) {
-      bgGradient = "from-yellow-950 to-slate-950";
-      glowColor = "bg-yellow-500/30";
+      bgGradient = "from-forest-900 to-forest-950";
+      glowColor = "bg-yellow-600/20";
     } else if (minDistance > WIN_RADIUS) {
-      bgGradient = "from-orange-950 to-slate-950";
-      glowColor = "bg-orange-500/30";
+      bgGradient = "from-forest-800 to-forest-950";
+      glowColor = "bg-blaze-500/20";
     } else {
-      bgGradient = "from-emerald-950 to-slate-950";
-      glowColor = "bg-emerald-500/40";
+      bgGradient = "from-forest-800 to-forest-950";
+      glowColor = "bg-emerald-500/30";
       distanceAnimateClass = "animate-pulse";
     }
   } else if (!activeTarget) {
      // Cluster Complete theme
-     bgGradient = "from-emerald-950 to-slate-950";
-     glowColor = "bg-emerald-500/40";
+     bgGradient = "from-forest-800 to-forest-950";
+     glowColor = "bg-emerald-500/30";
   }
 
   return (
-    <main className={`min-h-[100dvh] relative flex flex-col items-center p-6 bg-gradient-to-br transition-colors duration-1000 overflow-hidden ${bgGradient}`}>
+    <main className={`min-h-[100dvh] topo-bg relative flex flex-col items-center p-6 bg-gradient-to-br transition-colors duration-1000 overflow-hidden ${bgGradient}`}>
       {/* Background Glow */}
       <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] rounded-full blur-[140px] pointer-events-none transition-colors duration-1000 ${glowColor}`}></div>
 
       {/* TOP STATUS BANNER (Game Master Lockdown) */}
       <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 whitespace-nowrap">
-        <div className="bg-black/20 backdrop-blur-3xl border border-white/10 rounded-full py-2 px-6 shadow-2xl flex items-center space-x-3">
+        <div className="bg-forest-900/90 backdrop-blur-xl border border-cream-200/20 rounded-2xl py-2 px-6 shadow-[0_4px_20px_rgba(0,0,0,0.3)] flex items-center space-x-3">
           <span className="relative flex h-3 w-3">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blaze-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-3 w-3 bg-blaze-500"></span>
           </span>
-          <span className="text-white font-bold text-sm tracking-wide">
+          <span className="text-cream-100 font-bold text-sm tracking-widest uppercase">
             Active Phase: {CLUSTER_NAMES[globalActiveCluster]}
           </span>
         </div>
@@ -444,14 +444,14 @@ export default function Home() {
 
       {/* Persistent Team & Tokens Header */}
       <div className="fixed top-20 left-0 right-0 px-6 z-40 flex justify-center">
-        <div className="bg-black/30 backdrop-blur-2xl border border-white/10 rounded-full py-3 px-6 shadow-2xl flex items-center space-x-5">
-          <span className="text-slate-300 font-semibold uppercase tracking-widest text-xs">
+        <div className="bg-forest-900/90 backdrop-blur-xl border border-cream-200/15 rounded-2xl py-3 px-6 shadow-[0_4px_20px_rgba(0,0,0,0.3)] flex items-center space-x-5">
+          <span className="text-cream-200 font-bold uppercase tracking-widest text-xs">
             Group {selectedTeam}
           </span>
-          <div className="h-4 w-px bg-white/10"></div>
+          <div className="h-4 w-px bg-cream-200/15"></div>
           <div className="flex items-center space-x-2">
             <span className="text-xl">🪙</span>
-            <span className="text-white font-bold text-lg tabular-nums tracking-tight">{tokenCount}</span>
+            <span className="text-blaze-400 font-extrabold text-lg tabular-nums tracking-tight">{tokenCount}</span>
           </div>
         </div>
       </div>
@@ -460,8 +460,8 @@ export default function Home() {
       {activeTab === 'tracker' && (
         <>
           {/* FLOATING CHECKLIST UI (Mobile: Top, Desktop: Side) */}
-          <div className="relative z-40 mt-36 md:fixed md:top-32 md:right-8 w-full max-w-sm md:w-80 bg-white/5 backdrop-blur-2xl border border-white/20 rounded-[2rem] p-5 shadow-2xl flex-shrink-0">
-            <h3 className="text-white font-bold text-xs uppercase tracking-widest mb-4 opacity-80">
+          <div className="relative z-40 mt-36 md:fixed md:top-32 md:right-8 w-full max-w-sm md:w-80 expedition-card p-5 flex-shrink-0">
+            <h3 className="section-header mb-4">
               {CLUSTER_NAMES[globalActiveCluster]} POI
             </h3>
             <div className="space-y-3">
@@ -469,14 +469,14 @@ export default function Home() {
                 const isCompleted = completedPOIs.includes(poi.id);
                 const isActive = activeTarget?.id === poi.id;
                 
-                let statusClasses = "opacity-40 text-slate-400";
+                let statusClasses = "opacity-40 text-forest-700";
                 let icon = "⚪";
                 
                 if (isCompleted) {
-                  statusClasses = "line-through opacity-40 text-slate-500";
+                  statusClasses = "line-through opacity-40 text-forest-600";
                   icon = "✅";
                 } else if (isActive) {
-                  statusClasses = "opacity-100 font-bold text-white bg-white/10 rounded-xl px-3 py-2 -ml-3 border border-white/20 shadow-[0_0_15px_rgba(255,255,255,0.1)]";
+                  statusClasses = "opacity-100 font-bold text-forest-900 bg-blaze-500/10 rounded-xl px-3 py-2 -ml-3 border border-blaze-500/30 shadow-[0_0_12px_rgba(255,111,26,0.08)]";
                   icon = "📍";
                 }
 
@@ -485,7 +485,7 @@ export default function Home() {
                     <span className="flex-shrink-0">{icon}</span>
                     <span className="truncate">{poi.name}</span>
                     {isActive && minDistance !== null && (
-                      <span className="ml-auto flex-shrink-0 text-xs text-blue-300 font-mono font-bold animate-pulse">
+                      <span className="ml-auto flex-shrink-0 text-xs text-blaze-500 font-mono font-bold animate-pulse">
                         {minDistance}m
                       </span>
                     )}
@@ -496,51 +496,51 @@ export default function Home() {
           </div>
 
           {/* TRACKING CENTER CARD */}
-          <div className="relative z-10 max-w-md w-full bg-white/5 backdrop-blur-3xl rounded-[2.5rem] p-8 shadow-2xl border border-white/10 mt-8 md:mt-auto md:mb-auto">
+          <div className="relative z-10 max-w-md w-full expedition-card p-8 mt-8 md:mt-auto md:mb-auto">
             
             {activeTarget ? (
-              <div className="p-6 bg-black/20 backdrop-blur-md rounded-3xl border border-white/5 shadow-inner text-center">
-                <h2 className="text-blue-300 text-xs uppercase tracking-widest font-bold mb-2 animate-pulse">
+              <div className="p-6 bg-forest-800/10 rounded-2xl border border-forest-600/15 text-center">
+                <h2 className="text-blaze-500 text-xs uppercase tracking-[0.2em] font-extrabold mb-2 animate-pulse">
                   Active Target
                 </h2>
-                <p className={`text-2xl font-bold text-white tracking-tight`}>
+                <p className={`text-2xl font-extrabold text-forest-900 tracking-tight`}>
                   {activeTarget.name}
                 </p>
               </div>
             ) : (
-              <div className="p-6 bg-emerald-500/20 backdrop-blur-md rounded-3xl border border-emerald-500/50 shadow-inner text-center">
-                <p className="text-2xl font-bold text-emerald-300 tracking-tight">{CLUSTER_NAMES[globalActiveCluster]} Complete!</p>
+              <div className="p-6 bg-emerald-500/10 rounded-2xl border border-emerald-500/30 text-center">
+                <p className="text-2xl font-bold text-emerald-700 tracking-tight">{CLUSTER_NAMES[globalActiveCluster]} Complete!</p>
               </div>
             )}
 
             {activeTarget && minDistance !== null ? (
               <div className={`py-4 text-center ${distanceAnimateClass}`}>
-                <p className="text-slate-500 text-xs uppercase tracking-widest font-bold mb-2">
+                <p className="text-forest-600/60 text-xs uppercase tracking-[0.2em] font-extrabold mb-2">
                   Distance
                 </p>
                 <div className="flex items-baseline justify-center space-x-1">
-                  <p className="text-7xl font-bold text-white tracking-tighter tabular-nums drop-shadow-lg" style={{ minWidth: '3ch' }}>
+                  <p className="text-7xl font-extrabold text-blaze-500 tracking-tighter tabular-nums drop-shadow-lg" style={{ minWidth: '3ch' }}>
                     {minDistance > 1000 ? (minDistance / 1000).toFixed(1) : Math.round(minDistance)}
                   </p>
-                  <span className="text-2xl font-medium text-slate-400 tabular-nums">
+                  <span className="text-2xl font-bold text-forest-700 tabular-nums">
                     {minDistance > 1000 ? "km" : "m"}
                   </span>
                 </div>
               </div>
             ) : activeTarget ? (
               <div className="py-12 text-center flex flex-col items-center">
-                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mb-4"></div>
-                 <p className="text-slate-400 font-medium">Acquiring GPS...</p>
+                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blaze-500 mb-4"></div>
+                 <p className="text-forest-600 font-medium">Acquiring GPS...</p>
               </div>
             ) : (
               <div className="py-8 text-center">
                  <span className="text-6xl block mb-4">🎉</span>
-                 <p className="text-slate-400 font-medium">Await further instructions from HQ.</p>
+                 <p className="text-forest-600 font-medium">Await further instructions from HQ.</p>
               </div>
             )}
 
             {error && (
-              <div className="bg-red-500/20 backdrop-blur-xl text-red-200 p-4 rounded-2xl text-sm font-medium border border-red-500/30 mb-4">
+              <div className="bg-red-50 text-red-700 p-4 rounded-2xl text-sm font-bold border border-red-200 mb-4">
                 {error}
               </div>
             )}
@@ -550,15 +550,15 @@ export default function Home() {
               {activeTarget && minDistance !== null && (
                 <>
                   {missionStatus === 'pending' ? (
-                    <div className="w-full bg-blue-500/20 text-blue-200 border border-blue-500/50 font-bold text-lg py-5 px-8 rounded-full flex justify-center items-center space-x-3 shadow-inner">
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-200"></div>
+                    <div className="w-full bg-blaze-500/15 text-blaze-600 border border-blaze-500/30 font-bold text-lg py-5 px-8 rounded-2xl flex justify-center items-center space-x-3">
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blaze-500"></div>
                       <span>Waiting for Admin...</span>
                     </div>
                   ) : missionStatus === 'rejected' ? (
                     <button
                       onClick={submitMission}
                       disabled={minDistance > WIN_RADIUS}
-                      className="w-full bg-red-500/20 hover:bg-red-500/40 text-red-200 border border-red-500/50 font-bold text-lg py-5 px-8 rounded-full shadow-[0_0_20px_rgba(239,68,68,0.2)] active:scale-95 transition-all duration-300 disabled:opacity-50 disabled:active:scale-100"
+                      className="w-full bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 font-bold text-lg py-5 px-8 rounded-2xl active:scale-95 transition-all duration-300 disabled:opacity-50 disabled:active:scale-100"
                     >
                       Mission Rejected! Try Again
                     </button>
@@ -566,10 +566,10 @@ export default function Home() {
                     <button
                       onClick={submitMission}
                       disabled={minDistance > WIN_RADIUS}
-                      className={`w-full font-bold text-lg py-5 px-8 rounded-full active:scale-95 transition-all duration-300 ${
+                      className={`w-full font-bold text-lg py-5 px-8 rounded-2xl active:scale-95 transition-all duration-300 ${
                         minDistance <= WIN_RADIUS
-                          ? "bg-emerald-500/20 hover:bg-emerald-500/40 text-emerald-200 border border-emerald-500/50 shadow-[0_0_20px_rgba(16,185,129,0.2)]"
-                          : "bg-slate-800/50 text-slate-400 border border-slate-700 cursor-not-allowed opacity-50 active:scale-100"
+                          ? "btn-blaze"
+                          : "bg-forest-700/20 text-forest-600/50 border border-forest-600/15 cursor-not-allowed opacity-50 active:scale-100"
                       }`}
                     >
                       {minDistance <= WIN_RADIUS ? "Submit Mission to Boss" : `Get closer to interact (${minDistance}m)`}
@@ -588,15 +588,15 @@ export default function Home() {
                   <button
                     onClick={buyClue}
                     disabled={tokenCount < 1 || allUnlocked || isBuying}
-                    className={`w-full font-bold text-lg py-5 px-8 rounded-full active:scale-95 transition-all duration-300 flex items-center justify-center space-x-3 ${
+                    className={`w-full font-bold text-lg py-5 px-8 rounded-2xl active:scale-95 transition-all duration-300 flex items-center justify-center space-x-3 ${
                       tokenCount >= 1 && !allUnlocked
-                        ? "bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 border border-amber-500/40 shadow-[0_0_20px_rgba(245,158,11,0.15)]"
-                        : "bg-slate-800/50 text-slate-500 border border-slate-700 cursor-not-allowed opacity-50 active:scale-100"
+                        ? "btn-blaze"
+                        : "bg-forest-700/20 text-forest-600/50 border border-forest-600/15 cursor-not-allowed opacity-50 active:scale-100"
                     }`}
                   >
                     {isBuying ? (
                       <>
-                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-amber-200"></div>
+                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
                         <span>Opening...</span>
                       </>
                     ) : allUnlocked ? (
@@ -604,7 +604,7 @@ export default function Home() {
                     ) : (
                       <>
                         <span>🪙</span>
-                        <span>Buy Clue (1 Token)</span>
+                        <span>Unlock Clue (1 Token)</span>
                         <span className="text-sm opacity-60">({availableCount} left)</span>
                       </>
                     )}
@@ -614,7 +614,7 @@ export default function Home() {
 
               <button
                 onClick={handleLogout}
-                className="w-full bg-white/5 hover:bg-white/10 text-white font-medium text-lg py-5 px-8 rounded-full active:scale-95 transition-all duration-300 border border-white/10"
+                className="w-full bg-forest-800/10 hover:bg-forest-800/20 text-forest-700 font-semibold text-lg py-5 px-8 rounded-2xl active:scale-95 transition-all duration-300 border border-forest-600/15"
               >
                 Log Out
               </button>
@@ -628,8 +628,8 @@ export default function Home() {
       {activeTab === 'inventory' && (
         <div className="relative z-10 mt-36 max-w-lg w-full space-y-6 pb-28">
           <div className="text-center mb-2">
-            <h2 className="text-3xl font-extrabold text-white tracking-tight">📦 Clue Inventory</h2>
-            <p className="text-slate-400 text-sm font-medium mt-1">Your team&apos;s collected intelligence</p>
+            <h2 className="text-3xl font-extrabold text-cream-100 tracking-tight">📦 CLUE INVENTORY</h2>
+            <p className="text-cream-200/60 text-sm font-medium mt-1">Your team&apos;s collected intelligence</p>
           </div>
 
           {Object.entries(CLUSTER_NAMES).map(([clusterKey, clusterName]) => {
@@ -637,11 +637,11 @@ export default function Home() {
             const clues = CLUSTER_CLUES[clusterNum] || [];
 
             return (
-              <div key={clusterNum} className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-[2rem] p-6 shadow-2xl">
-                <h3 className="text-white font-bold text-sm uppercase tracking-widest mb-4 flex items-center space-x-2">
+              <div key={clusterNum} className="expedition-card p-6">
+                <h3 className="section-header mb-4 flex items-center space-x-2">
                   <span>{clusterNum === 1 ? '🏛️' : '🏙️'}</span>
                   <span>{clusterName}</span>
-                  <span className="ml-auto text-xs text-slate-400 font-medium normal-case tracking-normal">
+                  <span className="ml-auto text-xs text-forest-600 font-bold normal-case tracking-normal">
                     {clues.filter(c => unlockedClues[c.id]).length}/{clues.length}
                   </span>
                 </h3>
@@ -651,21 +651,21 @@ export default function Home() {
                     return (
                       <div
                         key={clue.id}
-                        className={`p-4 rounded-2xl border transition-all duration-300 ${
+                        className={`p-4 rounded-xl border transition-all duration-300 ${
                           isUnlocked
-                            ? "bg-emerald-500/10 border-emerald-500/30"
-                            : "bg-black/20 border-white/5 opacity-40"
+                            ? "bg-emerald-50 border-emerald-200"
+                            : "bg-forest-800/5 border-forest-600/10 opacity-40"
                         }`}
                       >
                         {isUnlocked ? (
                           <div className="flex items-start space-x-3">
                             <span className="text-lg flex-shrink-0 mt-0.5">🔓</span>
-                            <p className="text-white text-sm font-medium leading-relaxed">{clue.text}</p>
+                            <p className="text-forest-900 text-sm font-medium leading-relaxed">{clue.text}</p>
                           </div>
                         ) : (
                           <div className="flex items-center space-x-3">
                             <span className="text-lg flex-shrink-0">🔒</span>
-                            <p className="text-slate-500 text-sm font-medium italic">Locked — Purchase to reveal</p>
+                            <p className="text-forest-600 text-sm font-medium italic">Locked — Purchase to reveal</p>
                           </div>
                         )}
                       </div>
@@ -678,7 +678,7 @@ export default function Home() {
 
           <button
             onClick={handleLogout}
-            className="w-full bg-white/5 hover:bg-white/10 text-white font-medium text-lg py-5 px-8 rounded-full active:scale-95 transition-all duration-300 border border-white/10"
+            className="w-full bg-forest-900/60 hover:bg-forest-900/80 text-cream-100 font-semibold text-lg py-5 px-8 rounded-2xl active:scale-95 transition-all duration-300 border border-cream-200/10"
           >
             Log Out
           </button>
@@ -687,24 +687,24 @@ export default function Home() {
 
       {/* CARD FLIP OVERLAY */}
       {revealedClue && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/70 backdrop-blur-md">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-forest-950/80 backdrop-blur-md">
           <div className="animate-fade-in-scale w-full max-w-sm">
             <div className={`perspective-container ${isCardFlipped ? 'card-flipped' : ''}`}>
               <div className="card-inner" style={{ minHeight: '280px' }}>
                 {/* FRONT — Mystery Card */}
-                <div className="card-front bg-gradient-to-br from-amber-600 via-amber-500 to-yellow-400 flex flex-col items-center justify-center p-8 border-2 border-amber-300/50 shadow-[0_0_40px_rgba(245,158,11,0.3)]">
+                <div className="card-front bg-gradient-to-br from-blaze-500 via-blaze-400 to-yellow-400 flex flex-col items-center justify-center p-8 border-2 border-yellow-300/50 shadow-[0_0_40px_rgba(255,111,26,0.3)]">
                   <div className="w-20 h-20 rounded-full bg-white/20 flex items-center justify-center mb-4 backdrop-blur-sm border border-white/30">
                     <span className="text-4xl">❓</span>
                   </div>
-                  <p className="text-amber-950 font-extrabold text-xl tracking-tight">Mystery Clue</p>
-                  <p className="text-amber-800 text-sm font-medium mt-1">Flipping...</p>
+                  <p className="text-white font-extrabold text-xl tracking-tight drop-shadow-md">Mystery Clue</p>
+                  <p className="text-white/70 text-sm font-medium mt-1">Flipping...</p>
                 </div>
                 {/* BACK — Revealed Clue */}
-                <div className="card-back bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex flex-col items-center justify-center p-8 border-2 border-emerald-500/30 shadow-[0_0_40px_rgba(16,185,129,0.2)]">
-                  <div className="w-16 h-16 rounded-full bg-emerald-500/20 flex items-center justify-center mb-4 border border-emerald-500/30">
+                <div className="card-back bg-cream-50 flex flex-col items-center justify-center p-8 border-2 border-cream-300 shadow-[0_8px_30px_rgba(0,0,0,0.2)]">
+                  <div className="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center mb-4 border border-emerald-200">
                     <span className="text-3xl">🔓</span>
                   </div>
-                  <p className="text-white text-center font-medium leading-relaxed text-sm px-2">
+                  <p className="text-forest-900 text-center font-semibold leading-relaxed text-sm px-2">
                     {revealedClue.text}
                   </p>
                 </div>
@@ -713,7 +713,7 @@ export default function Home() {
             {isCardFlipped && (
               <button
                 onClick={() => { setRevealedClue(null); setIsCardFlipped(false); }}
-                className="w-full mt-6 bg-white text-black font-bold text-lg py-4 rounded-full shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:shadow-[0_0_30px_rgba(255,255,255,0.4)] hover:scale-[1.02] active:scale-95 transition-all duration-300"
+                className="w-full mt-6 btn-blaze text-lg py-4 rounded-2xl active:scale-95 transition-all duration-300"
               >
                 Got it!
               </button>
@@ -724,41 +724,41 @@ export default function Home() {
 
       {/* BOTTOM NAVIGATION BAR */}
       <div className="fixed bottom-0 left-0 right-0 z-50 pb-[env(safe-area-inset-bottom)]">
-        <div className="bg-black/40 backdrop-blur-3xl border-t border-white/10 shadow-[0_-4px_30px_rgba(0,0,0,0.3)]">
+        <div className="bg-forest-900/95 backdrop-blur-xl border-t border-cream-200/10 shadow-[0_-4px_30px_rgba(0,0,0,0.4)]">
           <div className="max-w-lg mx-auto flex">
             <button
               onClick={() => setActiveTab('tracker')}
               className={`flex-1 flex flex-col items-center py-3 pt-4 transition-all duration-300 ${
                 activeTab === 'tracker'
-                  ? 'text-white'
-                  : 'text-slate-500 hover:text-slate-300'
+                  ? 'text-blaze-400'
+                  : 'text-cream-200/40 hover:text-cream-200/70'
               }`}
             >
               <span className="text-xl mb-0.5">📍</span>
               <span className="text-[10px] font-bold uppercase tracking-widest">Tracker</span>
               {activeTab === 'tracker' && (
-                <div className="w-1 h-1 rounded-full bg-white mt-1"></div>
+                <div className="w-1 h-1 rounded-full bg-blaze-400 mt-1"></div>
               )}
             </button>
             <button
               onClick={() => setActiveTab('inventory')}
               className={`flex-1 flex flex-col items-center py-3 pt-4 transition-all duration-300 ${
                 activeTab === 'inventory'
-                  ? 'text-white'
-                  : 'text-slate-500 hover:text-slate-300'
+                  ? 'text-blaze-400'
+                  : 'text-cream-200/40 hover:text-cream-200/70'
               }`}
             >
               <span className="text-xl mb-0.5">📦</span>
               <span className="text-[10px] font-bold uppercase tracking-widest">Inventory</span>
               {activeTab === 'inventory' && (
-                <div className="w-1 h-1 rounded-full bg-white mt-1"></div>
+                <div className="w-1 h-1 rounded-full bg-blaze-400 mt-1"></div>
               )}
             </button>
           </div>
         </div>
       </div>
 
-      <p className="relative z-10 mt-8 mb-20 text-slate-500 text-xs font-medium text-center px-6 max-w-sm">
+      <p className="relative z-10 mt-8 mb-20 text-cream-200/30 text-xs font-medium text-center px-6 max-w-sm">
         Location permissions required.
       </p>
     </main>

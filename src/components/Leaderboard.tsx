@@ -60,28 +60,28 @@ export default function Leaderboard() {
           const isThirdPlace = index === 2;
 
           let medal = "";
-          let bgStyle = "bg-white/5 border-white/10 hover:bg-white/10";
-          let textStyle = "text-white";
+          let bgStyle = "bg-forest-800/6 border-forest-600/10 hover:bg-forest-800/10";
+          let textStyle = "text-forest-800";
 
           if (isFirstPlace) {
             medal = "🥇";
-            bgStyle = "bg-amber-500/20 border-amber-500/50 shadow-[0_0_20px_rgba(245,158,11,0.2)]";
-            textStyle = "text-amber-200 font-bold";
+            bgStyle = "bg-blaze-500/10 border-blaze-500/30 shadow-[0_0_16px_rgba(255,111,26,0.1)]";
+            textStyle = "text-blaze-600 font-bold";
           } else if (isSecondPlace) {
             medal = "🥈";
-            bgStyle = "bg-slate-300/20 border-slate-300/40";
+            bgStyle = "bg-forest-800/8 border-forest-600/15";
           } else if (isThirdPlace) {
             medal = "🥉";
-            bgStyle = "bg-orange-700/20 border-orange-700/40";
+            bgStyle = "bg-forest-800/6 border-forest-600/10";
           }
 
           return (
             <div
               key={team.firebaseKey}
-              className={`flex items-center justify-between p-5 rounded-3xl border backdrop-blur-md transition-all duration-500 ${bgStyle}`}
+              className={`flex items-center justify-between p-5 rounded-xl border transition-all duration-500 ${bgStyle}`}
             >
               <div className="flex items-center space-x-4">
-                <div className="flex items-center justify-center w-10 h-10 rounded-full bg-black/30 border border-white/10 font-bold text-white/80">
+                <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-forest-800/10 border border-forest-600/10 font-bold text-forest-700">
                   {medal ? medal : `#${index + 1}`}
                 </div>
                 <div>
@@ -91,9 +91,9 @@ export default function Leaderboard() {
                 </div>
               </div>
 
-              <div className="flex items-center space-x-2 bg-black/40 px-4 py-2 rounded-full border border-white/10">
+              <div className="flex items-center space-x-2 bg-forest-800/8 px-4 py-2 rounded-xl border border-forest-600/10">
                 <span className="text-xl">🪙</span>
-                <span className={`text-xl tabular-nums tracking-tight ${isFirstPlace ? 'text-amber-300 font-black' : 'text-white font-bold'}`}>
+                <span className={`text-xl tabular-nums tracking-tight ${isFirstPlace ? 'text-blaze-500 font-black' : 'text-forest-800 font-bold'}`}>
                   {team.token_count}
                 </span>
               </div>

@@ -290,11 +290,9 @@ export default function Home() {
         [`unlockedClues/${randomClue.id}`]: true,
       });
 
-      // Trigger card flip reveal
+      // Open modal face-down — user must tap the card to flip it
       setRevealedClue({ text: randomClue.text });
       setIsCardFlipped(false);
-      // Slight delay then flip
-      setTimeout(() => setIsCardFlipped(true), 100);
     } catch (err) {
       console.error("Error buying clue:", err);
     } finally {
@@ -442,8 +440,8 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Persistent Team & Tokens Header */}
-      <div className="fixed top-20 left-0 right-0 px-6 z-40 flex justify-center">
+      {/* Persistent Team & Tokens Header — z-[60] keeps it above tracker card & checklist */}
+      <div className="fixed top-20 left-0 right-0 px-6 z-[60] flex justify-center">
         <div className="bg-forest-900/90 backdrop-blur-xl border border-cream-200/15 rounded-2xl py-3 px-6 shadow-[0_4px_20px_rgba(0,0,0,0.3)] flex items-center space-x-5">
           <span className="text-cream-200 font-bold uppercase tracking-widest text-xs">
             Group {selectedTeam}
@@ -520,10 +518,10 @@ export default function Home() {
                 </p>
                 <div className="flex items-baseline justify-center space-x-1">
                   <p className="text-7xl font-extrabold text-blaze-500 tracking-tighter tabular-nums drop-shadow-lg" style={{ minWidth: '3ch' }}>
-                    {minDistance > 1000 ? (minDistance / 1000).toFixed(1) : Math.round(minDistance)}
+                    {Math.round(minDistance)}
                   </p>
                   <span className="text-2xl font-bold text-forest-700 tabular-nums">
-                    {minDistance > 1000 ? "km" : "m"}
+                    m
                   </span>
                 </div>
               </div>
@@ -685,39 +683,66 @@ export default function Home() {
         </div>
       )}
 
-      {/* CARD FLIP OVERLAY */}
+      {/* CARD FLIP OVERLAY — 3-step: pop out face-down → tap to flip → close */}
       {revealedClue && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-forest-950/80 backdrop-blur-md">
-          <div className="animate-fade-in-scale w-full max-w-sm">
-            <div className={`perspective-container ${isCardFlipped ? 'card-flipped' : ''}`}>
-              <div className="card-inner" style={{ minHeight: '280px' }}>
-                {/* FRONT — Mystery Card */}
-                <div className="card-front bg-gradient-to-br from-blaze-500 via-blaze-400 to-yellow-400 flex flex-col items-center justify-center p-8 border-2 border-yellow-300/50 shadow-[0_0_40px_rgba(255,111,26,0.3)]">
-                  <div className="w-20 h-20 rounded-full bg-white/20 flex items-center justify-center mb-4 backdrop-blur-sm border border-white/30">
+        <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center p-6 bg-forest-950/85 backdrop-blur-md">
+          <div className="animate-fade-in-scale w-full max-w-sm flex flex-col items-center">
+
+            {/* Instruction label */}
+            <p className={`text-cream-200/70 text-xs font-bold uppercase tracking-widest mb-4 transition-opacity duration-500 ${
+              isCardFlipped ? 'opacity-0 pointer-events-none' : 'opacity-100'
+            }`}>
+              Tap the card to reveal your clue
+            </p>
+
+            {/* Flippable card — clicking it triggers the flip */}
+            <div
+              className={`perspective-container w-full cursor-pointer select-none ${isCardFlipped ? 'card-flipped' : ''}`}
+              onClick={() => { if (!isCardFlipped) setIsCardFlipped(true); }}
+              role="button"
+              aria-label={isCardFlipped ? 'Clue revealed' : 'Tap to reveal clue'}
+            >
+              <div className="card-inner" style={{ minHeight: '300px' }}>
+
+                {/* FRONT — Face-down mystery card */}
+                <div className="card-front bg-gradient-to-br from-blaze-500 via-blaze-400 to-yellow-400 flex flex-col items-center justify-center p-8 border-2 border-yellow-300/40 shadow-[0_8px_40px_rgba(255,111,26,0.35)]">
+                  {/* Topo-style pattern on card face */}
+                  <div className="absolute inset-0 opacity-10" style={{
+                    backgroundImage: 'radial-gradient(ellipse 120px 50px at 30% 40%, transparent 48%, rgba(255,255,255,0.8) 48.5%, transparent 49%), radial-gradient(ellipse 90px 38px at 70% 60%, transparent 44%, rgba(255,255,255,0.6) 44.5%, transparent 45%)'
+                  }} />
+                  <div className="relative w-20 h-20 rounded-full bg-white/25 flex items-center justify-center mb-5 border-2 border-white/40 shadow-[0_0_20px_rgba(255,255,255,0.2)]">
                     <span className="text-4xl">❓</span>
                   </div>
-                  <p className="text-white font-extrabold text-xl tracking-tight drop-shadow-md">Mystery Clue</p>
-                  <p className="text-white/70 text-sm font-medium mt-1">Flipping...</p>
+                  <p className="relative text-white font-extrabold text-xl tracking-tight drop-shadow-md">Mystery Clue</p>
+                  <p className="relative text-white/70 text-sm font-semibold mt-2 tracking-wide">↑ Tap to flip ↑</p>
                 </div>
-                {/* BACK — Revealed Clue */}
-                <div className="card-back bg-cream-50 flex flex-col items-center justify-center p-8 border-2 border-cream-300 shadow-[0_8px_30px_rgba(0,0,0,0.2)]">
-                  <div className="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center mb-4 border border-emerald-200">
+
+                {/* BACK — Revealed clue on cream card */}
+                <div className="card-back bg-cream-50 flex flex-col items-center justify-center p-8 border-2 border-cream-300 shadow-[0_12px_40px_rgba(0,0,0,0.25)]">
+                  <div className="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center mb-5 border-2 border-emerald-300 shadow-[0_0_12px_rgba(16,185,129,0.15)]">
                     <span className="text-3xl">🔓</span>
                   </div>
-                  <p className="text-forest-900 text-center font-semibold leading-relaxed text-sm px-2">
+                  <p className="text-forest-600/60 text-[10px] font-extrabold uppercase tracking-[0.2em] mb-3">Clue Unlocked</p>
+                  <p className="text-forest-900 text-center font-semibold leading-relaxed text-base px-2">
                     {revealedClue.text}
                   </p>
                 </div>
+
               </div>
             </div>
-            {isCardFlipped && (
+
+            {/* Close button — only shown after flip */}
+            <div className={`w-full mt-6 transition-all duration-500 ${
+              isCardFlipped ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'
+            }`}>
               <button
                 onClick={() => { setRevealedClue(null); setIsCardFlipped(false); }}
-                className="w-full mt-6 btn-blaze text-lg py-4 rounded-2xl active:scale-95 transition-all duration-300"
+                className="w-full btn-blaze text-lg py-4 rounded-2xl active:scale-95 transition-all duration-300 font-bold"
               >
-                Got it!
+                Store in Inventory ✓
               </button>
-            )}
+            </div>
+
           </div>
         </div>
       )}

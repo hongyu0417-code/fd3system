@@ -161,22 +161,22 @@ const TARGET_LOCATIONS = [
         id: 9,
         cluster: 2,
         name: "POI 9",
-        lat: 3.160750,
-        lng: 101.708306
+        lat: 3.120210,
+        lng: 101.654567
     },
     {
         id: 10,
         cluster: 2,
         name: "POI 10",
-        lat: 3.158797,
-        lng: 101.710608
+        lat: 3.116173,
+        lng: 101.654197
     },
     {
         id: 11,
         cluster: 2,
         name: "POI 11",
-        lat: 3.156263,
-        lng: 101.713009
+        lat: 3.121044,
+        lng: 101.654987
     },
     {
         id: 12,

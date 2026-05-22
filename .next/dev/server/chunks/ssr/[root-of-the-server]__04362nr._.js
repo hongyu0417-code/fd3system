@@ -361,7 +361,10 @@ const POI_CLUES = {
         id: "ps-2",
         text: "Northeast central market, might wanna take a step back"
     },
-    // POI 3 (id: 3) — no clue needed, omitted intentionally
+    3: {
+        id: "ps-3",
+        text: "What do you get when you throw butter out a window"
+    },
     4: {
         id: "ps-4",
         text: "Transformers: Dark of the Moon"

@@ -47,13 +47,12 @@ export const TARGET_LOCATIONS: TargetLocation[] = [
 // --- Clue Definitions ---
 // Each clue is keyed by the POI's numeric ID so the nearest-POI logic
 // can look up the exact clue for that specific location.
-// POI 3 (id: 3) has no clue — it is intentionally omitted.
 
 export const POI_CLUES: Record<number, ClueItem> = {
   // Cluster 1 — Pasar Seni
   1:  { id: "ps-1",  text: "A lost person will probably find this" },
   2:  { id: "ps-2",  text: "Northeast central market, might wanna take a step back" },
-  // POI 3 (id: 3) — no clue needed, omitted intentionally
+  3:  { id: "ps-3",  text: "What do you get when you throw butter out a window" },
   4:  { id: "ps-4",  text: "Transformers: Dark of the Moon" },
   5:  { id: "ps-5",  text: "Hokkien mee is red, no such thing as PRAWN NOODLE" },
   6:  { id: "ps-6",  text: "Why did the chicken cross the road?" },

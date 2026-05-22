@@ -45,25 +45,37 @@ export const TARGET_LOCATIONS: TargetLocation[] = [
 ];
 
 // --- Clue Definitions ---
+// Each clue is keyed by the POI's numeric ID so the nearest-POI logic
+// can look up the exact clue for that specific location.
+// POI 3 (id: 3) has no clue — it is intentionally omitted.
+
+export const POI_CLUES: Record<number, ClueItem> = {
+  // Cluster 1 — Pasar Seni
+  1:  { id: "ps-1",  text: "A lost person will probably find this" },
+  2:  { id: "ps-2",  text: "Northeast central market, might wanna take a step back" },
+  // POI 3 (id: 3) — no clue needed, omitted intentionally
+  4:  { id: "ps-4",  text: "Transformers: Dark of the Moon" },
+  5:  { id: "ps-5",  text: "Hokkien mee is red, no such thing as PRAWN NOODLE" },
+  6:  { id: "ps-6",  text: "Why did the chicken cross the road?" },
+  7:  { id: "ps-7",  text: "AIESEC logo" },
+  8:  { id: "ps-8",  text: "When was this tokong built?" },
+  // Cluster 2 — KLCC
+  9:  { id: "klcc-1", text: "What is this bridge?" },
+  10: { id: "klcc-2", text: "Azizulhasni \"The Pocket Rocketman\" Awang" },
+  11: { id: "klcc-3", text: "Someone may find the code sitting with remarkably bad posture" },
+  12: { id: "klcc-4", text: "Have you checked both sides of the bridge?" },
+  13: { id: "klcc-5", text: "Take a seat and stretch your neck" },
+};
+
+// --- Legacy cluster-keyed clue list (used for Inventory display) ---
+// Built automatically from POI_CLUES so the Inventory tab renders all
+// clues grouped by cluster without duplicating data.
 
 export const CLUSTER_CLUES: Record<number, ClueItem[]> = {
-  // Pasar Seni — 8 clues
-  1: [
-    { id: "ps-1", text: "A lost person will probably find this" },
-    { id: "ps-2", text: "northeast central market, might wanna take a step back" },
-    { id: "ps-3", text: "what do you get when you throw butter out of a window?" },
-    { id: "ps-4", text: "transformers: dark of the moon" },
-    { id: "ps-5", text: "hokkien mee is red, no such thing as PRAWN NOODLE" },
-    { id: "ps-6", text: "Why did the chicken cross the road?" },
-    { id: "ps-7", text: "AIESEC logo" },
-    { id: "ps-8", text: "When was this tokong built?" },
-  ],
-  // KLCC — 5 clues
-  2: [
-    { id: "klcc-1", text: "What is this bridge?" },
-    { id: "klcc-2", text: "Azizulhasni \"The Pocket Rocketman\" Awang" },
-    { id: "klcc-3", text: "someone may find the code sitting with remarkably bad posture" },
-    { id: "klcc-4", text: "have you checked both sides of the bridge?" },
-    { id: "klcc-5", text: "take a seat and stretch your neck" },
-  ],
+  1: TARGET_LOCATIONS
+    .filter(loc => loc.cluster === 1 && POI_CLUES[loc.id])
+    .map(loc => POI_CLUES[loc.id]),
+  2: TARGET_LOCATIONS
+    .filter(loc => loc.cluster === 2 && POI_CLUES[loc.id])
+    .map(loc => POI_CLUES[loc.id]),
 };

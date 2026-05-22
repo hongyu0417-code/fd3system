@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { database } from "../lib/firebase";
 import { ref, onValue, update, push, get, increment } from "firebase/database";
-import { TARGET_LOCATIONS, CLUSTER_NAMES, CLUSTER_CLUES, TargetLocation } from "../lib/locations";
+import { TARGET_LOCATIONS, CLUSTER_NAMES, CLUSTER_CLUES, POI_CLUES, TargetLocation } from "../lib/locations";
 
 // Haversine formula to calculate distance between two coordinates in meters
 function getDistanceInMeters(lat1: number, lon1: number, lat2: number, lon2: number): number {
@@ -272,33 +272,63 @@ export default function Home() {
     }
   };
 
-  // Buy a random clue from the current cluster
+  // Buy the clue for the nearest unclaimed POI in the active cluster
   const buyClue = useCallback(async () => {
     if (!selectedTeam || isBuying || tokenCount < 1) return;
     setIsBuying(true);
     try {
-      const cluesForCluster = CLUSTER_CLUES[globalActiveCluster] || [];
-      const available = cluesForCluster.filter(c => !unlockedClues[c.id]);
-      if (available.length === 0) { setIsBuying(false); return; }
+      // All POIs in this cluster that have a clue defined
+      const clusterPOIs = TARGET_LOCATIONS.filter(
+        t => t.cluster === globalActiveCluster && POI_CLUES[t.id]
+      );
 
-      const randomClue = available[Math.floor(Math.random() * available.length)];
+      // Filter to those whose clue has NOT been unlocked yet
+      const available = clusterPOIs.filter(t => !unlockedClues[POI_CLUES[t.id].id]);
+
+      if (available.length === 0) {
+        // All clues already unlocked — do not deduct a token
+        setIsBuying(false);
+        return;
+      }
+
+      // Find the nearest available POI using current GPS position.
+      // If GPS is unavailable, fall back to the first available POI.
+      let targetPOI = available[0];
+      if (latestCoords) {
+        let minDist = getDistanceInMeters(
+          latestCoords.lat, latestCoords.lng,
+          available[0].lat, available[0].lng
+        );
+        for (let i = 1; i < available.length; i++) {
+          const d = getDistanceInMeters(
+            latestCoords.lat, latestCoords.lng,
+            available[i].lat, available[i].lng
+          );
+          if (d < minDist) {
+            minDist = d;
+            targetPOI = available[i];
+          }
+        }
+      }
+
+      const clueForPOI = POI_CLUES[targetPOI.id];
 
       // Atomic Firebase update: deduct 1 token + save clue
       const teamRef = ref(database, `teams/${selectedTeam}`);
       await update(teamRef, {
         token_count: increment(-1),
-        [`unlockedClues/${randomClue.id}`]: true,
+        [`unlockedClues/${clueForPOI.id}`]: true,
       });
 
       // Open modal face-down — user must tap the card to flip it
-      setRevealedClue({ text: randomClue.text });
+      setRevealedClue({ text: clueForPOI.text });
       setIsCardFlipped(false);
     } catch (err) {
       console.error("Error buying clue:", err);
     } finally {
       setIsBuying(false);
     }
-  }, [selectedTeam, isBuying, tokenCount, globalActiveCluster, unlockedClues]);
+  }, [selectedTeam, isBuying, tokenCount, globalActiveCluster, unlockedClues, latestCoords]);
 
   // --- UI: LOGIN ---
   if (selectedTeam === null) {
@@ -578,8 +608,13 @@ export default function Home() {
 
               {/* BUY CLUE BUTTON */}
               {(() => {
-                const cluesForCluster = CLUSTER_CLUES[globalActiveCluster] || [];
-                const availableCount = cluesForCluster.filter(c => !unlockedClues[c.id]).length;
+                // Count POIs in this cluster that have a clue and haven't been unlocked yet
+                const clusterPOIs = TARGET_LOCATIONS.filter(
+                  t => t.cluster === globalActiveCluster && POI_CLUES[t.id]
+                );
+                const availableCount = clusterPOIs.filter(
+                  t => !unlockedClues[POI_CLUES[t.id].id]
+                ).length;
                 const allUnlocked = availableCount === 0;
 
                 return (
@@ -595,14 +630,14 @@ export default function Home() {
                     {isBuying ? (
                       <>
                         <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                        <span>Opening...</span>
+                        <span>Finding nearest clue...</span>
                       </>
                     ) : allUnlocked ? (
-                      <span>All Clues Unlocked ✨</span>
+                      <span>All Clues Unlocked for this Area ✨</span>
                     ) : (
                       <>
                         <span>🪙</span>
-                        <span>Unlock Clue (1 Token)</span>
+                        <span>Unlock Nearest Clue (1 Token)</span>
                         <span className="text-sm opacity-60">({availableCount} left)</span>
                       </>
                     )}
@@ -649,21 +684,21 @@ export default function Home() {
                     return (
                       <div
                         key={clue.id}
-                        className={`p-4 rounded-xl border transition-all duration-300 ${
+                        className={`rounded-xl border transition-all duration-300 ${
                           isUnlocked
                             ? "bg-emerald-50 border-emerald-200"
                             : "bg-forest-800/5 border-forest-600/10 opacity-40"
                         }`}
                       >
                         {isUnlocked ? (
-                          <div className="flex items-start space-x-3">
-                            <span className="text-lg flex-shrink-0 mt-0.5">🔓</span>
-                            <p className="text-forest-900 text-sm font-medium leading-relaxed">{clue.text}</p>
+                          <div className="flex flex-col items-center justify-center text-center p-6 space-y-2">
+                            <span className="text-2xl">🔓</span>
+                            <p className="text-forest-900 text-sm font-semibold leading-relaxed">{clue.text}</p>
                           </div>
                         ) : (
-                          <div className="flex items-center space-x-3">
-                            <span className="text-lg flex-shrink-0">🔒</span>
-                            <p className="text-forest-600 text-sm font-medium italic">Locked — Purchase to reveal</p>
+                          <div className="flex flex-col items-center justify-center text-center p-5 space-y-1">
+                            <span className="text-xl">🔒</span>
+                            <p className="text-forest-600 text-xs font-medium italic">Locked — Purchase to reveal</p>
                           </div>
                         )}
                       </div>

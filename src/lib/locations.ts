@@ -36,12 +36,12 @@ export const TARGET_LOCATIONS: TargetLocation[] = [
   { id: 6,  cluster: 1, name: "POI 6", lat: 3.142462, lng: 101.697955 },
   { id: 7,  cluster: 1, name: "POI 7", lat: 3.142612, lng: 101.696539 },
   { id: 8,  cluster: 1, name: "POI 8", lat: 3.144143, lng: 101.696682 },
-  // Cluster 2 — KLCC (5 POIs)
-  { id: 9,  cluster: 2, name: "POI 1", lat: 3.160750, lng: 101.708306 },
-  { id: 10, cluster: 2, name: "POI 2", lat: 3.158797, lng: 101.710608 },
-  { id: 11, cluster: 2, name: "POI 3", lat: 3.156263, lng: 101.713009 },
-  { id: 12, cluster: 2, name: "POI 4", lat: 3.156206, lng: 101.713772 },
-  { id: 13, cluster: 2, name: "POI 5", lat: 3.156767, lng: 101.716090 },
+  // Cluster 2 — KLCC (5 POIs, global IDs 9–13)
+  { id: 9,  cluster: 2, name: "POI 9",  lat: 3.160750, lng: 101.708306 },
+  { id: 10, cluster: 2, name: "POI 10", lat: 3.158797, lng: 101.710608 },
+  { id: 11, cluster: 2, name: "POI 11", lat: 3.156263, lng: 101.713009 },
+  { id: 12, cluster: 2, name: "POI 12", lat: 3.156206, lng: 101.713772 },
+  { id: 13, cluster: 2, name: "POI 13", lat: 3.156767, lng: 101.716090 },
 ];
 
 // --- Clue Definitions ---

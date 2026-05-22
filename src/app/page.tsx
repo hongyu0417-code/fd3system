@@ -309,6 +309,20 @@ export default function Home() {
             targetPOI = available[i];
           }
         }
+
+        // Movement-lock guard: find the overall nearest clueable POI
+        // (regardless of unlock status). If that POI's clue is already
+        // owned, the player hasn't moved — abort without spending a token.
+        const overallNearest = clusterPOIs.reduce((nearest, poi) => {
+          const dN = getDistanceInMeters(latestCoords.lat, latestCoords.lng, nearest.lat, nearest.lng);
+          const dC = getDistanceInMeters(latestCoords.lat, latestCoords.lng, poi.lat, poi.lng);
+          return dC < dN ? poi : nearest;
+        });
+        if (overallNearest.id !== targetPOI.id) {
+          // Standing closest to a POI already owned — movement lock active
+          setIsBuying(false);
+          return;
+        }
       }
 
       const clueForPOI = POI_CLUES[targetPOI.id];
@@ -606,23 +620,50 @@ export default function Home() {
                 </>
               )}
 
-              {/* BUY CLUE BUTTON */}
+              {/* BUY CLUE BUTTON — Movement Lock System */}
               {(() => {
-                // Count POIs in this cluster that have a clue and haven't been unlocked yet
+                // All POIs in this cluster that have a clue defined
                 const clusterPOIs = TARGET_LOCATIONS.filter(
                   t => t.cluster === globalActiveCluster && POI_CLUES[t.id]
                 );
-                const availableCount = clusterPOIs.filter(
-                  t => !unlockedClues[POI_CLUES[t.id].id]
+
+                // Count how many clues are still locked (for allUnlocked fallback)
+                const unlockedCount = clusterPOIs.filter(
+                  t => unlockedClues[POI_CLUES[t.id].id]
                 ).length;
-                const allUnlocked = availableCount === 0;
+                const allUnlocked = unlockedCount === clusterPOIs.length;
+
+                // Find the physically nearest POI (with a clue) to the player right now.
+                // This is the "movement lock" anchor — independent of mission completion.
+                let nearestClueablePOI: typeof clusterPOIs[0] | null = null;
+                if (latestCoords && clusterPOIs.length > 0) {
+                  nearestClueablePOI = clusterPOIs.reduce((nearest, poi) => {
+                    const dNearest = getDistanceInMeters(
+                      latestCoords.lat, latestCoords.lng, nearest.lat, nearest.lng
+                    );
+                    const dCurrent = getDistanceInMeters(
+                      latestCoords.lat, latestCoords.lng, poi.lat, poi.lng
+                    );
+                    return dCurrent < dNearest ? poi : nearest;
+                  });
+                }
+
+                // Movement lock: nearest POI's clue already in inventory?
+                const nearestAlreadyUnlocked =
+                  nearestClueablePOI !== null &&
+                  !!unlockedClues[POI_CLUES[nearestClueablePOI.id].id];
+
+                // Button is locked if: no tokens, all done, currently buying,
+                // or the nearest POI's clue is already owned (movement lock).
+                const isLocked =
+                  tokenCount < 1 || allUnlocked || isBuying || nearestAlreadyUnlocked;
 
                 return (
                   <button
                     onClick={buyClue}
-                    disabled={tokenCount < 1 || allUnlocked || isBuying}
+                    disabled={isLocked}
                     className={`w-full font-bold text-lg py-5 px-8 rounded-2xl active:scale-95 transition-all duration-300 flex items-center justify-center space-x-3 ${
-                      tokenCount >= 1 && !allUnlocked
+                      !isLocked
                         ? "btn-blaze"
                         : "bg-forest-700/20 text-forest-600/50 border border-forest-600/15 cursor-not-allowed opacity-50 active:scale-100"
                     }`}
@@ -634,11 +675,12 @@ export default function Home() {
                       </>
                     ) : allUnlocked ? (
                       <span>All Clues Unlocked for this Area ✨</span>
+                    ) : nearestAlreadyUnlocked ? (
+                      <span>Move to next POI to unlock 🚶</span>
                     ) : (
                       <>
                         <span>🪙</span>
                         <span>Unlock Nearest Clue (1 Token)</span>
-                        <span className="text-sm opacity-60">({availableCount} left)</span>
                       </>
                     )}
                   </button>

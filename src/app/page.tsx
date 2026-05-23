@@ -35,7 +35,7 @@ const TEAM_PINS: Record<number, string> = {
   2: "verystrongpassword",
   3: "iforgotmypassword",
   4: "RyanCoolestEP",
-  5: "JiongXiHenHandsome",
+  5: "JiongWest(Xi)",
 };
 
 export default function Home() {

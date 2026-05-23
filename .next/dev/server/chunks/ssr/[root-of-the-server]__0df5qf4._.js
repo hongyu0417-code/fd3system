@@ -99,7 +99,14 @@ const CLUSTER_NAMES = {
     2: "KLCC"
 };
 const TARGET_LOCATIONS = [
-    // Cluster 1 — Pasar Seni (8 POIs)
+    // Cluster 1 — Pasar Seni (8 POIs + 1 Demo POI)
+    {
+        id: 0,
+        cluster: 1,
+        name: "Demo POI",
+        lat: 3.116344,
+        lng: 101.655893
+    },
     {
         id: 1,
         cluster: 1,
@@ -161,22 +168,22 @@ const TARGET_LOCATIONS = [
         id: 9,
         cluster: 2,
         name: "POI 9",
-        lat: 3.120210,
-        lng: 101.654567
+        lat: 3.160750,
+        lng: 101.708306
     },
     {
         id: 10,
         cluster: 2,
         name: "POI 10",
-        lat: 3.116173,
-        lng: 101.654197
+        lat: 3.158797,
+        lng: 101.710608
     },
     {
         id: 11,
         cluster: 2,
         name: "POI 11",
-        lat: 3.121044,
-        lng: 101.654987
+        lat: 3.156263,
+        lng: 101.713009
     },
     {
         id: 12,
@@ -195,6 +202,10 @@ const TARGET_LOCATIONS = [
 ];
 const POI_CLUES = {
     // Cluster 1 — Pasar Seni
+    0: {
+        id: "demo",
+        text: "This is a demo clue for testing."
+    },
     1: {
         id: "ps-1",
         text: "A lost person will probably find this"
@@ -291,7 +302,7 @@ const TEAM_PINS = {
     2: "verystrongpassword",
     3: "iforgotmypassword",
     4: "RyanCoolestEP",
-    5: "JiongXiHenHandsome"
+    5: "JiongWest(Xi)"
 };
 function Home() {
     // Authentication State
